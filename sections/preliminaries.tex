@@ -1,0 +1,65 @@
+% !TEX root = root.tex
+
+{\color{red}(Here goes all notation that needs to be explained.)}
+In this paper, we consider the setting of real time model learning over
+networked  systems. The system is modeled in the form
+\begin{equation}
+        \mathcal{P}:\, y[k] = \phi[k]\theta_{\text{true}} + w[k]
+        \label{eq:sysmodel}
+\end{equation}
+{\color{red}(Bracket notation for time indices $k$ is maybe a bit old fashioned.
+Later on when I start involving attack signals more explicitly, I will however be using so many
+subindices that I'd like to save the space.)}
+where $y[k]$ are the measured outputs, $\phi[k]$ is a row vector of
+the regressors consisting of current and past data, $w[k] \in \mathbb{R}^n$
+are i.i.d. zero-mean gaussian measurement errors with covariance $\gamma^2$, and
+$\theta_{\text{true}} \in \mathbb{R}^n$ are the true system parameters.
+{\color{red}(In the case of an ARX model, it might be more prudent to say that
+$w[k]$ is a disturbance, and thus show up in $\phi[k]$?)}
+The system (\ref{eq:sysmodel}) can be modeled using any model structure that
+is linear in the parameters. In this paper, we will mainly be considering
+ARX and FIR model structures. In the ARX case, we have
+\begin{equation}
+        \begin{split}
+                \phi[k] &= \begin{bmatrix}
+                        y_{[k-1:k-n]} & u_{[k-1:k-n]}  
+                \end{bmatrix} \\
+                y_{[k-1:k-n]} &= \begin{bmatrix}
+                        y[k-1] & y[k-2] & \cdots & y[k-n]
+                \end{bmatrix} \\
+                u_{[k-1:k-n]}  &= \begin{bmatrix}
+                        u[k-1] & u[k-2] & \cdots & u[k-n]
+                \end{bmatrix}
+        \end{split}
+\end{equation}
+and similarly in the FIR case we have
+\begin{equation}
+        \phi[k] = \begin{bmatrix}
+                u_{[k-1:k-n]}  
+        \end{bmatrix}
+\end{equation}
+where $n$ is the order of the system. \cite{ljung_system_1999}
+
+The physical plant $\mathcal{P}$ is connected to the operator over network.
+Inputs are sent from the network to the plant, where the outputs are
+measured and then sent back to the operator, again over the network.
+These signals are then used to estimate a model of the system.
+It is assumed in this paper that at any time, the network might be
+compromised by a \textit{strategic adversary}\cite{chong_tutorial_2019}.
+The adversary might have access to the input/output signals to learn about
+the system, and the ability to corrupt the signals transmitted over network.
+Thus, the inputs received
+at the plant side $\tilde{u}[k]$ and the output measurements received at the
+operator side $\tilde{y}[k]$ might not be the true signals, and we have
+\begin{align}
+        \tilde{y}[k] = y[k] + \delta_y[k] \\
+        \tilde{u}[k] = u[k] + \delta_u[k]
+\end{align}
+as illustrated in figure \ref{fig:adversary-schematic}.
+
+\begin{figure}
+        \centering
+        \input{figs/adversary-schematic.tex}
+        \caption{Block schematic of the networked adaptive control system, with strategic adversary.}
+        \label{fig:adversary-schematic}
+\end{figure}

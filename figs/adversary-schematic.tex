@@ -1,0 +1,75 @@
+% !TEX root = root.tex
+
+\usetikzlibrary{shapes.symbols}
+
+\tikzstyle{block} = [draw, fill=white, rectangle, 
+    minimum height=1cm, minimum width=1cm]
+\tikzstyle{sum} = [draw, fill=white, circle, node distance=1cm]
+\tikzstyle{branch} = [draw, fill=black, circle,
+minimum width=1pt, node distance=2cm, scale=0.5]
+\tikzstyle{input} = [coordinate]
+\tikzstyle{output} = [coordinate]
+\tikzstyle{pinstyle} = [pin edge={to-,thin,black}]
+\tikzstyle{network} = [cloud, cloud puffs=7, draw, aspect=2, node distance=3cm]
+
+\begin{tikzpicture}[auto, node distance=2cm,>=latex]
+    \node [block, name=P] {\large$\mathcal{P}$};
+    \node [name=adversary, below of=P]
+        {\includegraphics[width=1cm]{figs/angryfaic.png}};
+    % \draw(0,-2.7) node{Adversary};
+    \node [network, left of=adversary, name=networku] {Network};
+    \node [network, right of=adversary, name=networky] {Network};
+    % \node [block, below of=adversary, name=C] {\large $\mathcal{C}$};
+    \node [block, below of=P, name=E, node distance=5cm] {\large Estimator};
+    \node [branch, left of=E,node distance=6cm, name=ubranch] {};
+    \node [coordinate, below of=ubranch](u){};
+
+    %Adversary lines
+    \draw[->] (adversary) to [bend right]
+        node[pos=0.3]{$\delta_u[k]$} (networku);
+    \draw[->] (networku) to[bend right]
+        node[pos=0.3]{$u[k]$} (adversary);
+
+    \draw[->] (adversary) to [bend right]
+        node[pos=0.3]{$\delta_y[k]$} (networky);
+    \draw[->] (networky) to[bend right]
+        node[pos=0.3]{$y[k]$} (adversary);
+
+    %C-E line
+    % \draw[->] (E) -- node{$\hat{\theta}$} (C);
+
+    %Block lines
+    \draw[->] (P) -| node{$y[k]$} (networky);
+    % \draw[->] (networky) |- node[pos=0.49]{$\tilde{x}_k$} (C);
+    \draw[->] (networky) |- node{$\tilde{y}[k]$} (E);
+    % \draw[->] (C) -| node {$u_k$} (networku);
+    \draw[<->] (networku) |- (E);
+    \draw[->] (u) -- node{$u[k]$} (ubranch);
+    \draw[->] (networku) |- node {$\tilde{u}[k]$} (P);
+\end{tikzpicture}
+
+
+% \node [input, name=input] {};
+% \node [block, right of=input] (Cr) {$C_r(s)$};
+% \node [sum, right of=Cr, node distance=1.5cm] (esum) {};
+% \node [block, right of=esum] (controller) {C(s)};
+% \node [block, right of=controller, 
+%         node distance=2cm] (system) {G(s)};
+% \node [sum, right of=system, node distance=1.5cm] (dsum) {};
+% \node [block, above of=dsum,
+%     pin={[pinstyle]above:d}] (Gd) {$G_d(s)$};
+% \draw [->] (Cr) -- (esum);
+
+% \draw [->] (Gd) -- (dsum);
+
+% \draw [->] (controller) -- node[name=u] {$u$} (system);
+% \node [output, right of=dsum] (output) {};
+% \node [input, below of=u] (measurements) {};
+
+% \draw [draw,->] (input) -- node {$r$} (Cr);
+% \draw [->] (esum) -- node {$e$} (controller);
+% \draw [->] (system) -- (dsum);
+% \draw [->] (dsum) -- node [name=y] {$y$}(output);
+% \draw [->] (y) |- (measurements) -| (esum);
+% \draw [->] (measurements) -| node[pos=0.99] {$-$} 
+% node [near end] {$y_m$} (esum);
