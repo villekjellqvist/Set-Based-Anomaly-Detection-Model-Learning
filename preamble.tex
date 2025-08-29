@@ -6,16 +6,22 @@
 % Maths
 \usepackage{amsmath, amsfonts, amssymb}
 
+% Comments
+\usepackage[colorinlistoftodos]{todonotes}
+
 %Citations
 \usepackage[url=false]{biblatex}
 \addbibresource{MHE-Hyptest.bib}
+
+% Assumptions
+\newtheorem{assumption}{Assumption}
 
 % Symbol Defines
 \newcommand{\nullA}{\mathcal{N}_A}
 \newcommand{\Pran}{\Pi_A}
 \newcommand{\Port}{\Pi_A^\perp}
-\newcommand{\tC}{\theta^C}
-
-\usepackage[colorinlistoftodos]{todonotes}
 \newcommand{\AT}[1]{\todo[inline, color=orange!60]{\textbf{AT:} #1}}
 \newcommand{\VK}[1]{\todo[inline, color=gray!60]{\textbf{VK:} #1}}
+\newcommand{\tC}{\overline{\theta}}
+\newcommand{\Pinv}{P_0^{-1}}
+\newcommand{\PC}{\overline{P}_0^{-1}}

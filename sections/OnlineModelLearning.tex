@@ -6,32 +6,45 @@ combine it with elliptical constraints on the parameters, making use of prior kn
 that the operator has. This will require the use of numerical optimization methods, instead 
 of the closed form solution found in RLS. The cost function to be solved for the optimal
 estimated parameters $\theta$ estimating the system (\ref{eq:sysmodel}) is
-\begin{equation}
-    \begin{split}
+\begin{align}
         \arg\min\limits_{\theta} J[k](\theta) &\triangleq
             \sum\limits_{i=1}^k \left[
-            \lambda^{k-i}(y[i]-\phi[i]\theta)^T(y[i]-\phi[i]\theta) + \right.\\
-            &+ \left. \lambda^{k+1}(\theta-\theta_0)^TP_0^{-1}(\theta-\theta_0) \right]
-    \end{split}
-    \label{eq:costfunction}
-\end{equation}
-Where $\lambda \in (0,1]$ is a forgetting factor, $\theta_0$
+            \lambda^{k-i}(y[i]-\phi[i]\theta)^T(y[i]-\phi[i]\theta) + \right. \notag \\
+            &+ \left. \lambda^{k+1}(\theta-\theta_0)^T\Pinv(\theta-\theta_0) \right]
+    \label{eq:costfunction} \\
+    \text{Subject to:}& \notag \\
+    A\theta &= A\theta_0 = b
+    \label{eq:eqconst} \\
+    (\theta-\theta_0)^T&\Pinv(\theta-\theta_0) \leq 1
+    \label{eq:elliptconst}
+\end{align}
+Where $\lambda \in (0,1]$ is a forgetting factor and $\theta_0$
 is the inital guess for the parameters
-by the operator and $P_0 \succ 0$ is a weighting matrix representing the
-operators confidence in the initial guess. It should be noted that 
+by the operator. $Pinv \succeq 0$ is a weighting matrix representing the
+operators confidence in the initial guess, while simultaneously defining an
+ellipsoid around $\theta^0$ for the
+inequality constraint (\ref{eq:elliptconst}). Since some linear combination
+of the parameters in $\theta$ is already known and defined by the equality constraint
+(\ref{eq:eqconst}), there is no need to weight those elements with $\Pinv$. We therefore
+make the following assumption.
+
+{\color{red}(Maybe $P_0$ should be used for the ellipsoidal inequality constraints
+instead, as both $P_0$ and $Q$ represent the operators confidence in the intial guess
+$\tC_0$? Less hyperparameters to tune.)}
+\AT{That could be a good idea, but they play different roles. P is now a 'soft-constraint', whereas (12) is a hard constraint. If one formulates the Lagrangian w.r.t. (12), you get exactly something of the form of (6).}
+\AT{It could be interesting to consider the special case of $\theta_0^C = 0$, since then the soft-constraint version of (12) becomes a weighted l2-regularization, which can be solved analytically.}
+
+\begin{assumption}
+The matrix $\Pinv$ is zero-weight for the known parameter combinations. Thus $\Pinv \in \nullA$, where
+$\nullA = \ker A$ is a null space basis matrix for the equality constraint matrix $A$.
+\end{assumption}
+It should be noted that 
 $J[k](\theta)$ is the same cost function that is solved
 by the RLS algorithm. \cite{islam_recursive_2019}
-{\color{red}(Maybe mention the inspiration from RLS, but tone it down around these paragraphs? It's
-mentioned a bit much.)}
 
-The prior knowledge that the operator has is represented by both equality constraints
-on $\theta$, and ellipsoidal constraints on the vector space spanned by the null space
-of the equality constraints. Let the equality constraints be
-\begin{equation}
-    A\theta = b
-    \label{eq:eqconst}
-\end{equation}
-and denote $\nullA=\ker A$ as a null space basis of $A$. We have that
+The prior knowledge that the operator has is represented by the (in)equality constraints
+on $\theta$.
+Using the null space of $A$, we have that
 \begin{equation}
     \Pran = A^+A
 \end{equation}
@@ -42,7 +55,7 @@ is the orthogonal projector onto the range of $A$ and
 is the orthogonal projector onto the null space of $A$,
 where $A^+ = (AA^T)^{-1}A$ denotes the pseudo inverse of $A$.
 Let $\tC = \nullA^T\theta$ denote the parameter vector lying in the
-equality constrained subspace of $\theta$-space. Since
+equality unconstrained subspace of $\theta$-space. Since
 $\Pran + \Port = I$ and using (\ref{eq:eqconst}) we have that
 \begin{align}
     (\Pran + \Port)\theta &= A^+A\theta + \nullA\nullA^T\theta \notag \\
@@ -50,41 +63,42 @@ $\Pran + \Port = I$ and using (\ref{eq:eqconst}) we have that
     \label{eq:thetanull}
 \end{align}
 
-Next, the ellipsoidal inequality constraints are defined on $\tC$ as
+The same procedure can be done for the inital guess $\theta_0$.
+Let $\tC_0 = \nullA^T\theta_0$ such that
 \begin{equation}
-    (\tC - \tC_0)^TQ(\tC - \tC_0) \leq 1
+    \theta_0 = A^+b + \nullA\tC_0.
 \end{equation}
-where $Q \succ 0$ is a positive definite weighting matrix and $\tC_0$ is
-the operators initial parameter guess.
-{\color{red}(Maybe $P_0$ should be used for the ellipsoidal inequality constraints
-instead, as both $P_0$ and $Q$ represent the operators confidence in the intial guess
-$\tC_0$? Less hyperparameters to tune.)}
-\AT{That could be a good idea, but they play different roles. P is now a 'soft-constraint', whereas (12) is a hard constraint. If one formulates the Lagrangian w.r.t. (12), you get exactly something of the form of (6).}
-\AT{It could be interesting to consider the special case of $\theta_0^C = 0$, since then the soft-constraint version of (12) becomes a weighted l2-regularization, which can be solved analytically.}
+
 Analogously to (\ref{eq:thetanull})
 we have for $\tC_0$ that
+Then the equality constraint (\ref{eq:elliptconst}) can be rewritten
 \begin{equation}
-    (\Pran + \Port)\theta_0 = A^+b + \nullA\tC_0
+    (\tC-\tC_0)^T\PC(\tC-\tC_0) \leq 1
 \end{equation}
+where $\PC = \nullA^T\Pinv\nullA$.
 
-
-
+\par
 To get the real-time estimates of $\theta$, we need to minimize
 (\ref{eq:costfunction}) at each sampling time $k$. First, note that the
 cost function $J[k](\theta)$ can be rewritten as
 \begin{equation}
     \begin{split}
-        \arg\min\limits_{\theta} J[k](\theta) &= \theta^TE[k]\theta - 2F^T[k]\theta + G[k] \\
-        E[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}\phi^T[i]\phi[i] + \lambda^{k+1}P_0^{-1} \\
-        F[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}\phi^T[i]y[i] + \lambda^{k+1}P_0^{-1}\theta_0 \\
-        G[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}y^T[i]y[i] + \lambda^{k+1}\theta_0^TP_0^{-1}\theta_0
+        \arg\min\limits_{\theta} J[k](\theta) &= \theta^TE[k]\theta - 2F[k]\theta + G[k] \\
+        E[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(\phi[i])^T\phi[i] + \lambda^{k+1}\Pinv \\
+        F[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(y[i])^T\phi[i] + \lambda^{k+1}\theta_0^T\Pinv \\
+        G[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(y[i])^Ty[i] + \lambda^{k+1}\theta_0^T\Pinv\theta_0
     \end{split}
+    \label{eq:EFG}
 \end{equation}
 and that $G[k]$ is not dependent on $\theta$, and can thus be removed from the
-cost function $J[k](\theta)$ without affecting the minimizing argument. The
-optimization problem can then be written recursively
-\begin{equation}
-    \begin{split}
-        \arg\min\limits_{\theta} J[k](\theta) &= \theta^TE[k]\theta - 2F^T[k]\theta
-    \end{split}
-\end{equation}
+cost function $J[k](\theta)$ without affecting the minimizing argument. The matrices
+$E[k]$ and $F[k]$ can be written recursively
+\begin{align}
+    E[k+1] &= E[k] + (\phi[k])^T\phi[k] \\
+    F[k+1] &= F[k] + (\phi[k])^Ty[k]
+\end{align}
+Replacing $\theta, \theta_0$ with $\tC, \tC_0$, the optimization problem
+(\ref{eq:costfunction}-\ref{eq:elliptconst}) can then be reformulated
+\begin{align}
+    \arg\min\limits_{\theta} J[k](\theta) &= \tC\nullA^TE[k]\nullA\tC - 2F^T[k]\theta 
+\end{align}
