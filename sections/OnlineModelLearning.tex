@@ -59,6 +59,8 @@ the operators initial parameter guess.
 {\color{red}(Maybe $P_0$ should be used for the ellipsoidal inequality constraints
 instead, as both $P_0$ and $Q$ represent the operators confidence in the intial guess
 $\tC_0$? Less hyperparameters to tune.)}
+\AT{That could be a good idea, but they play different roles. P is now a 'soft-constraint', whereas (12) is a hard constraint. If one formulates the Lagrangian w.r.t. (12), you get exactly something of the form of (6).}
+\AT{It could be interesting to consider the special case of $\theta_0^C = 0$, since then the soft-constraint version of (12) becomes a weighted l2-regularization, which can be solved analytically.}
 Analogously to (\ref{eq:thetanull})
 we have for $\tC_0$ that
 \begin{equation}
