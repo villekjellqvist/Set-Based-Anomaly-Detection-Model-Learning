@@ -1,5 +1,4 @@
 % !TEX root = root.tex
-{\color{red}Maybe (part of) this next paragraph is better suited for Introduction.}
 One frequently used method for real-time parameter estimation is recursive least squares
 (RLS)\cite{astrom_adaptive_2008}. Here, we will use the same optimization problem but
 combine it with elliptical constraints on the parameters, making use of prior knowledge
@@ -8,6 +7,7 @@ of the closed form solution found in RLS. The cost function to be solved for the
 estimated parameters $\theta$ estimating the system (\ref{eq:sysmodel}) is
 \begin{align}
         \arg\min\limits_{\theta} J[k](\theta) &\triangleq
+        \\ \triangleq \arg\min\limits_{\theta} &
             \sum\limits_{i=1}^k \left[
             \lambda^{k-i}(y[i]-\phi[i]\theta)^T(y[i]-\phi[i]\theta) + \right. \notag \\
             &+ \left. \lambda^{k+1}(\theta-\theta_0)^T\Pinv(\theta-\theta_0) \right]
@@ -15,36 +15,42 @@ estimated parameters $\theta$ estimating the system (\ref{eq:sysmodel}) is
     \text{Subject to:}& \notag \\
     A\theta &= A\theta_0 = b
     \label{eq:eqconst} \\
-    (\theta-\theta_0)^T&\Pinv(\theta-\theta_0) \leq 1
+    (\theta-\theta_0)^T&Q(\theta-\theta_0) \leq 1
     \label{eq:elliptconst}
 \end{align}
 Where $\lambda \in (0,1]$ is a forgetting factor and $\theta_0$
 is the inital guess for the parameters
-by the operator. $Pinv \succeq 0$ is a weighting matrix representing the
-operators confidence in the initial guess, while simultaneously defining an
+by the operator. $\Pinv \succeq 0$ is a weighting matrix representing the
+operators confidence in the initial guess, while $Q \succeq 0$ defines an
 ellipsoid around $\theta^0$ for the
 inequality constraint (\ref{eq:elliptconst}). Since some linear combination
 of the parameters in $\theta$ is already known and defined by the equality constraint
-(\ref{eq:eqconst}), there is no need to weight those elements with $\Pinv$. We therefore
+(\ref{eq:eqconst}), there is no need to weight those elements with $\Pinv$ and $Q$. We therefore
 make the following assumption.
 
-{\color{red}(Maybe $P_0$ should be used for the ellipsoidal inequality constraints
+\VK{(Maybe $P_0$ should be used for the ellipsoidal inequality constraints
 instead, as both $P_0$ and $Q$ represent the operators confidence in the intial guess
 $\tC_0$? Less hyperparameters to tune.)}
 \AT{That could be a good idea, but they play different roles. P is now a 'soft-constraint', whereas (12) is a hard constraint. If one formulates the Lagrangian w.r.t. (12), you get exactly something of the form of (6).}
 \AT{It could be interesting to consider the special case of $\theta_0^C = 0$, since then the soft-constraint version of (12) becomes a weighted l2-regularization, which can be solved analytically.}
 
 \begin{assumption}
-The matrix $\Pinv$ is zero-weight for the known parameter combinations. Thus $\Pinv \in \nullA$, where
-$\nullA = \ker A$ is a null space basis matrix for the equality constraint matrix $A$.
+
+\begin{color}{red}
+    The matrices $Q, \Pinv$ are zero-weight for the known parameter combinations. Thus $\Pinv, Q \in \nullA$, where
+    $\nullA = \ker A$ is a null space basis matrix for the equality constraint matrix $A$.
+\end{color}
+\VK{Is it ill-defined to claim that a matrix is part of a 
+vector space? Since $Q, \Pinv$ are symmetric, their row and column space are the same, so maybe I
+should say instead that their row and column vectors are members of $\nullA$?}
+\label{ass:NA_ass}
 \end{assumption}
 It should be noted that 
 $J[k](\theta)$ is the same cost function that is solved
 by the RLS algorithm. \cite{islam_recursive_2019}
 
 The prior knowledge that the operator has is represented by the (in)equality constraints
-on $\theta$.
-Using the null space of $A$, we have that
+on $\theta$. We have that
 \begin{equation}
     \Pran = A^+A
 \end{equation}
@@ -53,7 +59,7 @@ is the orthogonal projector onto the range of $A$ and
     \Port = I - \Pi_A = \nullA\nullA^T
 \end{equation}
 is the orthogonal projector onto the null space of $A$,
-where $A^+ = (AA^T)^{-1}A$ denotes the pseudo inverse of $A$.
+where $A^+ = A^T(AA^T)^{-1}$ denotes the pseudo inverse of $A$.
 Let $\tC = \nullA^T\theta$ denote the parameter vector lying in the
 equality unconstrained subspace of $\theta$-space. Since
 $\Pran + \Port = I$ and using (\ref{eq:eqconst}) we have that
@@ -68,14 +74,10 @@ Let $\tC_0 = \nullA^T\theta_0$ such that
 \begin{equation}
     \theta_0 = A^+b + \nullA\tC_0.
 \end{equation}
-
-Analogously to (\ref{eq:thetanull})
-we have for $\tC_0$ that
-Then the equality constraint (\ref{eq:elliptconst}) can be rewritten
+Then the inequality constraint (\ref{eq:elliptconst}) can be rewritten
 \begin{equation}
-    (\tC-\tC_0)^T\PC(\tC-\tC_0) \leq 1
+    (\tC-\tC_0)^T\QC(\tC-\tC_0) \leq 1.
 \end{equation}
-where $\PC = \nullA^T\Pinv\nullA$.
 
 \par
 To get the real-time estimates of $\theta$, we need to minimize
@@ -83,22 +85,89 @@ To get the real-time estimates of $\theta$, we need to minimize
 cost function $J[k](\theta)$ can be rewritten as
 \begin{equation}
     \begin{split}
-        \arg\min\limits_{\theta} J[k](\theta) &= \theta^TE[k]\theta - 2F[k]\theta + G[k] \\
-        E[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(\phi[i])^T\phi[i] + \lambda^{k+1}\Pinv \\
-        F[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(y[i])^T\phi[i] + \lambda^{k+1}\theta_0^T\Pinv \\
-        G[k] &= \sum\limits_{i=0}^{k} \lambda^{k-i}(y[i])^Ty[i] + \lambda^{k+1}\theta_0^T\Pinv\theta_0
+        J[k](\theta) &= \sum\limits_{i=0}^k \left[
+            \theta^T\left(\Pinv[k] + E[k]\right)\theta - \right.\\
+        &- 2\left(\theta_0^T\Pinv[k] + F[k]\right)\theta +\\
+        &+\left.\theta_0^T\Pinv[k]\theta_0 + G[k] \right]\\
+        E[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(\phi[i])^T\phi[i] \\
+        F[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(y[i])^T\phi[i] \\
+        G[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(y[i])^Ty[i]
     \end{split}
     \label{eq:EFG}
 \end{equation}
-and that $G[k]$ is not dependent on $\theta$, and can thus be removed from the
-cost function $J[k](\theta)$ without affecting the minimizing argument. The matrices
-$E[k]$ and $F[k]$ can be written recursively
+\VK{$\Pinv[k]$ is placeholder, I think it's a bit confusing to use the same symbol
+for $\Pinv$ in both its static and recursive form.}
+\VK{For that matter, $\Pinv$ is only represented in its inverse form because that is how it's
+presented in RLS. In the RLS case it makes more sense since the $P_k$ matrices directly
+represent the covariance of the parameter estimate which one needs to take the inverse of at each
+time point. That connection is not obvious here, and the covariance of the estimate is not really used
+in any case.}
+and that $G[k]$ is not dependent on $\theta$, and can thus be ignored in the optimization
+problem without affecting the minimizing argument. The matrices
+$E[k], F[k]$ and $\lambda^{k+1}\Pinv$ can be written recursively
 \begin{align}
-    E[k+1] &= E[k] + (\phi[k])^T\phi[k] \\
-    F[k+1] &= F[k] + (\phi[k])^Ty[k]
+    E[k+1] &= \lambda E[k] + (\phi[k])^T\phi[k] \label{eq:Erec}\\
+    F[k+1] &= \lambda F[k] + (y[k])^T\phi[k] \label{eq:Frec}\\
+    \Pinv[k+1] &= \lambda\Pinv[k] \label{eq:Prec}
 \end{align}
 Replacing $\theta, \theta_0$ with $\tC, \tC_0$, the optimization problem
 (\ref{eq:costfunction}-\ref{eq:elliptconst}) can then be reformulated
 \begin{align}
-    \arg\min\limits_{\theta} J[k](\theta) &= \tC\nullA^TE[k]\nullA\tC - 2F^T[k]\theta 
+    \arg\min\limits_{\tC} J[k](\tC) &= \notag
+        \\ = \arg\min\limits_{\tC} &
+            \sum\limits_{i=1}^k \left[\tC^T\overline{E}[k]\tC - 2\overline{F}[k]\tC\right]
+            \label{eq:Jconst}\\
+    \text{Subject to:}& \notag \\
+    (\tC-\tC_0)^T&\QC(\tC-\tC_0) \leq 1
+    \label{eq:redelliptconst}
 \end{align}
+where
+\begin{align}
+        \overline{E}[k] &= \nullA^T\left(E[k] + \Pinv[k]\right)\nullA \label{eq:Econst}\\
+        \overline{F}[k] &= F[k]\nullA + \tC_0^T\nullA^T\Pinv[k] - \notag \\
+        &-(A^+b)^TE[k]\nullA \label{eq:Fconst}.
+\end{align}
+\begin{proof}
+    By assumption \ref{ass:NA_ass}, we have that $\Pinv A^+b = (A^+b)^T\Pinv = 0$.
+    Using this fact and (\ref{eq:thetanull}) we expand from (\ref{eq:EFG})
+    \begin{equation}
+        \begin{gathered}
+            \theta^T\left(\Pinv[k] + E[k]\right)\theta = \\
+            = \sum\limits_{i=1}^k \bigg{[} \lambda^{k-i}\bigg{(}(A^+b)^T(\phi[i])^T\phi[i]A^+b
+            + \\
+            + 2(A^+b)^T(\phi[i])^T\phi[i]\nullA\tC + \tC^T\nullA^T(\phi[i])^T\phi[i]\nullA\tC \bigg{)} \bigg{]} + \\
+            + \tC\nullA^T\Pinv\nullA\tC\lambda^{k+1}
+        \end{gathered}
+        \label{eq:expandedE}
+    \end{equation}
+    Likewise, we can do the same for 
+    \begin{equation}
+        \begin{gathered}
+            \left(\theta_0^T\Pinv[k] + F[k]\right)\theta = \\
+            = \sum\limits_{i=1}^k \lambda^{k-i}\left((y[k])^T\phi[k]A^+b + (y[k])^T\phi[k]\nullA\tC\right) + \\
+            + \lambda^{k+1}\tC_0^T\nullA^T\Pinv[k]\nullA\tC
+        \end{gathered}
+        \label{eq:expandedF}
+    \end{equation}
+    To find the minimizing $\tC$ with respect to (\ref{eq:EFG}), we can discard
+    all terms in (\ref{eq:expandedE}) and (\ref{eq:expandedF}) that do not depend on $\tC$.
+    To get the remaining terms into their recursive form, replace all instances of
+    $\lambda^{k+1}\Pinv$ with $\Pinv[k]$, $\lambda^{k-i}(\phi[i])^T\phi[i]$ with $E[k]$ and
+    $\lambda^{k-i}(y[k])^T\phi[k]$ with $F[k]$. Finally to get (\ref{eq:Econst}) and (\ref{eq:Fconst}),
+    gather all terms that are quadratic in $\tC$ into $\overline{E}[k]$ and all terms that are linear in
+    $\tC$ into $\overline{F}[k]$.
+\end{proof}
+With all these expressions at hand, we can now formulate a method for constrained
+parameter inference with recursive data collection.
+\begin{algorithm}
+    \caption{Real Time Model Learning with Parameter Constraints}
+    \Input{$\tC_0, \Pinv, A, b, Q$}
+    $E[0], F[0] \gets 0$\;
+    $\nullA \gets \ker A$\;
+    \While{$k\leq T$}{
+        Update $E[k], F[k], \Pinv[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
+        Update $\overline{E}[k], \overline{F}[k]$ according to (\ref{eq:Econst}, \ref{eq:Fconst})\;
+        Solve the optimization problem (\ref{eq:Jconst}-\ref{eq:redelliptconst}) for $\tC$\;
+        $\theta \gets A^+b + \nullA\tC$
+    }
+\end{algorithm}

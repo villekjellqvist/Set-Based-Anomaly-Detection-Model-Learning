@@ -7,15 +7,15 @@ networked  systems. The system is modeled in the form
         \mathcal{P}:\, y[k] = \phi[k]\theta_{\text{true}} + w[k]
         \label{eq:sysmodel}
 \end{equation}
-{\color{red}(Bracket notation for time indices $k$ is maybe a bit old fashioned.
+\VK{Bracket notation for time indices $k$ is maybe a bit old fashioned.
 Later on when I start involving attack signals more explicitly, I will however be using so many
-subindices that I'd like to save the space.)}
+subindices that I'd like to save the space.}
 where $y[k]$ are the measured outputs, $\phi[k]$ is a row vector of
 the regressors consisting of current and past data, $w[k] \in \mathbb{R}^n$
 are i.i.d. zero-mean gaussian measurement errors with covariance $\gamma^2$, and
 $\theta_{\text{true}} \in \mathbb{R}^n$ are the true system parameters.
-{\color{red}(In the case of an ARX model, it might be more prudent to say that
-$w[k]$ is a disturbance, and thus also part of $\phi[k]$?)}
+\VK{In the case of an ARX model, it might be more prudent to say that
+$w[k]$ is a disturbance, and thus also part of $\phi[k]$?}
 The system (\ref{eq:sysmodel}) can be modeled using any model structure that
 is linear in the parameters. In this paper, we will mainly be considering
 ARX and FIR model structures. In the ARX case, we have
@@ -57,7 +57,7 @@ operator side $\tilde{y}[k]$ might not be the true signals, and we have
 \end{align}
 as illustrated in figure \ref{fig:adversary-schematic}.
 
-\begin{figure}
+\begin{figure}[t]
         \centering
         \input{figs/adversary-schematic.tex}
         \caption{Block schematic of the networked adaptive control system, with strategic adversary.}

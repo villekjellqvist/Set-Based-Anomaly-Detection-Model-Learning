@@ -5,12 +5,19 @@
 
 % Maths
 \usepackage{amsmath, amsfonts, amssymb}
+% Algorithms
+\usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{algpseudocode}
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
 
 % Comments
 \usepackage[colorinlistoftodos]{todonotes}
+\newcommand{\AT}[1]{\todo[inline, color=orange!60]{\textbf{AT:} #1}}
+\newcommand{\VK}[1]{\todo[inline, color=gray!60]{\textbf{VK:} #1}}
 
 %Citations
-\usepackage[url=false]{biblatex}
+\usepackage[url=false, style=ieee]{biblatex}
 \addbibresource{MHE-Hyptest.bib}
 
 % Assumptions
@@ -20,8 +27,7 @@
 \newcommand{\nullA}{\mathcal{N}_A}
 \newcommand{\Pran}{\Pi_A}
 \newcommand{\Port}{\Pi_A^\perp}
-\newcommand{\AT}[1]{\todo[inline, color=orange!60]{\textbf{AT:} #1}}
-\newcommand{\VK}[1]{\todo[inline, color=gray!60]{\textbf{VK:} #1}}
 \newcommand{\tC}{\overline{\theta}}
 \newcommand{\Pinv}{P_0^{-1}}
 \newcommand{\PC}{\overline{P}_0^{-1}}
+\newcommand{\QC}{\nullA^TQ\nullA}
