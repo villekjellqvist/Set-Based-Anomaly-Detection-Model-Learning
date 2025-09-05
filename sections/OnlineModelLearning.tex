@@ -158,9 +158,10 @@ where
     $\tC$ into $\overline{F}[k]$.
 \end{proof}
 With all these expressions at hand, we can now formulate a method for constrained
-parameter inference with recursive data collection.
+parameter inference with recursive data collection, as seen in algorithm \ref{alg:constrainedlearning}.
 \begin{algorithm}
     \caption{Real Time Model Learning with Parameter Constraints}
+    \label{alg:constrainedlearning}
     \Input{$\tC_0, \Pinv, A, b, Q$}
     $E[0], F[0] \gets 0$\;
     $\nullA \gets \ker A$\;
