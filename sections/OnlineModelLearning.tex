@@ -1,4 +1,5 @@
 % !TEX root = root.tex
+
 One frequently used method for real-time parameter estimation is recursive least squares
 (RLS)\cite{astrom_adaptive_2008}. Here, we will use the same optimization problem but
 combine it with elliptical constraints on the parameters, making use of prior knowledge
@@ -6,7 +7,7 @@ that the operator has. This will require the use of numerical optimization metho
 of the closed form solution found in RLS. The cost function to be solved for the optimal
 estimated parameters $\theta$ estimating the system (\ref{eq:sysmodel}) is
 \begin{align}
-        \arg\min\limits_{\theta} J[k](\theta) &\triangleq
+        \arg\min\limits_{\theta} J[k](\theta) &\triangleq \notag
         \\ \triangleq \arg\min\limits_{\theta} &
             \sum\limits_{i=1}^k \left[
             \lambda^{k-i}(y[i]-\phi[i]\theta)^T(y[i]-\phi[i]\theta) + \right. \notag \\
@@ -50,7 +51,13 @@ $J[k](\theta)$ is the same cost function that is solved
 by the RLS algorithm. \cite{islam_recursive_2019}
 
 The prior knowledge that the operator has is represented by the (in)equality constraints
-on $\theta$. We have that
+on $\theta$. These form the permissible model set for our parameter estimates, defined as
+\begin{equation}
+    \Mp = \left\{ \theta
+    \vert
+    (A\theta=b) \wedge (\theta-\theta_0)^TQ(\theta-\theta_0) \leq 1 \right\}.
+\end{equation}
+We have that
 \begin{equation}
     \Pran = A^+A
 \end{equation}
@@ -86,18 +93,17 @@ cost function $J[k](\theta)$ can be rewritten as
 \begin{equation}
     \begin{split}
         J[k](\theta) &= \sum\limits_{i=0}^k \left[
-            \theta^T\left(\Pinv[k] + E[k]\right)\theta - \right.\\
-        &- 2\left(\theta_0^T\Pinv[k] + F[k]\right)\theta +\\
-        &+\left.\theta_0^T\Pinv[k]\theta_0 + G[k] \right]\\
+            \theta^T\left(P[k] + E[k]\right)\theta - \right.\\
+        &- 2\left(\theta_0^TP[k] + F[k]\right)\theta +\\
+        &+\left.\theta_0^TP[k]\theta_0 + G[k] \right]\\
         E[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(\phi[i])^T\phi[i] \\
         F[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(y[i])^T\phi[i] \\
-        G[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(y[i])^Ty[i]
+        G[k] &= \sum\limits_{i=1}^{k} \lambda^{k-i}(y[i])^Ty[i] \\
+        P[K] &= \lambda^{k+1}\Pinv
     \end{split}
     \label{eq:EFG}
 \end{equation}
-\VK{$\Pinv[k]$ is placeholder, I think it's a bit confusing to use the same symbol
-for $\Pinv$ in both its static and recursive form.}
-\VK{For that matter, $\Pinv$ is only represented in its inverse form because that is how it's
+\VK{$\Pinv$ is only represented in its inverse form because that is how it's
 presented in RLS. In the RLS case it makes more sense since the $P_k$ matrices directly
 represent the covariance of the parameter estimate which one needs to take the inverse of at each
 time point. That connection is not obvious here, and the covariance of the estimate is not really used
@@ -108,10 +114,13 @@ $E[k], F[k]$ and $\lambda^{k+1}\Pinv$ can be written recursively
 \begin{align}
     E[k+1] &= \lambda E[k] + (\phi[k])^T\phi[k] \label{eq:Erec}\\
     F[k+1] &= \lambda F[k] + (y[k])^T\phi[k] \label{eq:Frec}\\
-    \Pinv[k+1] &= \lambda\Pinv[k] \label{eq:Prec}
+    P[k+1] &= \lambda P[k]; \, P[0] = \lambda\Pinv \label{eq:Prec}
 \end{align}
+We can now express the constrained optimization problem as the following lemma.
+
+\begin{lemma}
 Replacing $\theta, \theta_0$ with $\tC, \tC_0$, the optimization problem
-(\ref{eq:costfunction}-\ref{eq:elliptconst}) can then be reformulated
+(\ref{eq:costfunction}-\ref{eq:elliptconst}) can be reformulated as
 \begin{align}
     \arg\min\limits_{\tC} J[k](\tC) &= \notag
         \\ = \arg\min\limits_{\tC} &
@@ -127,48 +136,25 @@ where
         \overline{F}[k] &= F[k]\nullA + \tC_0^T\nullA^T\Pinv[k] - \notag \\
         &-(A^+b)^TE[k]\nullA \label{eq:Fconst}.
 \end{align}
-\begin{proof}
-    By assumption \ref{ass:NA_ass}, we have that $\Pinv A^+b = (A^+b)^T\Pinv = 0$.
-    Using this fact and (\ref{eq:thetanull}) we expand from (\ref{eq:EFG})
-    \begin{equation}
-        \begin{gathered}
-            \theta^T\left(\Pinv[k] + E[k]\right)\theta = \\
-            = \sum\limits_{i=1}^k \bigg{[} \lambda^{k-i}\bigg{(}(A^+b)^T(\phi[i])^T\phi[i]A^+b
-            + \\
-            + 2(A^+b)^T(\phi[i])^T\phi[i]\nullA\tC + \tC^T\nullA^T(\phi[i])^T\phi[i]\nullA\tC \bigg{)} \bigg{]} + \\
-            + \tC\nullA^T\Pinv\nullA\tC\lambda^{k+1}
-        \end{gathered}
-        \label{eq:expandedE}
-    \end{equation}
-    Likewise, we can do the same for 
-    \begin{equation}
-        \begin{gathered}
-            \left(\theta_0^T\Pinv[k] + F[k]\right)\theta = \\
-            = \sum\limits_{i=1}^k \lambda^{k-i}\left((y[k])^T\phi[k]A^+b + (y[k])^T\phi[k]\nullA\tC\right) + \\
-            + \lambda^{k+1}\tC_0^T\nullA^T\Pinv[k]\nullA\tC
-        \end{gathered}
-        \label{eq:expandedF}
-    \end{equation}
-    To find the minimizing $\tC$ with respect to (\ref{eq:EFG}), we can discard
-    all terms in (\ref{eq:expandedE}) and (\ref{eq:expandedF}) that do not depend on $\tC$.
-    To get the remaining terms into their recursive form, replace all instances of
-    $\lambda^{k+1}\Pinv$ with $\Pinv[k]$, $\lambda^{k-i}(\phi[i])^T\phi[i]$ with $E[k]$ and
-    $\lambda^{k-i}(y[k])^T\phi[k]$ with $F[k]$. Finally to get (\ref{eq:Econst}) and (\ref{eq:Fconst}),
-    gather all terms that are quadratic in $\tC$ into $\overline{E}[k]$ and all terms that are linear in
-    $\tC$ into $\overline{F}[k]$.
-\end{proof}
-With all these expressions at hand, we can now formulate a method for constrained
-parameter inference with recursive data collection, as seen in algorithm \ref{alg:constrainedlearning}.
+The proof of this lemma can be found in appendix \ref{app:constproof}.
+\label{lemma:constproblem}
+\end{lemma}
+By use of lemma \ref{lemma:constproblem}, we can construct a method for constrained
+parameter inference with recursive data collection. Let $T$ be the total amount of timesteps
+that the identification problem is run for. The constrained problem is then solved by
+algorithm \ref{alg:constrainedlearning}.
 \begin{algorithm}
     \caption{Real Time Model Learning with Parameter Constraints}
     \label{alg:constrainedlearning}
     \Input{$\tC_0, \Pinv, A, b, Q$}
     $E[0], F[0] \gets 0$\;
+    $k \gets 0$\;
     $\nullA \gets \ker A$\;
     \While{$k\leq T$}{
         Update $E[k], F[k], \Pinv[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
         Update $\overline{E}[k], \overline{F}[k]$ according to (\ref{eq:Econst}, \ref{eq:Fconst})\;
         Solve the optimization problem (\ref{eq:Jconst}-\ref{eq:redelliptconst}) for $\tC$\;
-        $\theta \gets A^+b + \nullA\tC$
+        $\theta \gets A^+b + \nullA\tC$\;
+        $k \gets k+1$\;
     }
 \end{algorithm}

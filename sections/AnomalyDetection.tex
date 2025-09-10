@@ -1,0 +1,20 @@
+% !TEX root = root.tex
+
+To decide whether the system behaves nominally according to our prior knowledge and
+defined model set $\Mp$, we will use two hypothesis testing.
+Given our best constrained estimate $\theta$ obtained by algorithm \ref{alg:constrainedlearning},
+define also $\tU$ as the unconstrained solution to (\ref{eq:costfunction}), disregarding
+the constraints (\ref{eq:eqconst}-\ref{eq:elliptconst}).
+Let $\hyp_0$ be the null hypothesis that the input-output data conforms to our predefined model set,
+and $\hyp_1$ be the hypothesis that it does not.
+Using the likelihood $\LH(\theta^* \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})$
+of any parameter vector $\theta^*$ given the data, we can define the
+likelihood ratio test
+\begin{equation}
+    R_L = \frac{\sup\limits_{\theta \in \Mp}
+    \LH(\theta \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})}
+    {\sup\limits_{\tU \in \mathbb{R}^m}
+    \LH(\tU \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})} \in (0,1]
+\end{equation}
+where a $R_L$ close to one means  $\hyp_0$ is likely to be true, and
+inversely that a low $R_L$ close to zero means that $\hyp_1$ is likely true.

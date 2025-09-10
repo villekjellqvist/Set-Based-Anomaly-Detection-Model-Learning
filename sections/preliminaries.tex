@@ -13,7 +13,7 @@ subindices that I'd like to save the space.}
 where $y[k]$ are the measured outputs, $\phi[k]$ is a row vector of
 the regressors consisting of current and past data, $w[k] \in \mathbb{R}^n$
 are i.i.d. zero-mean gaussian measurement errors with covariance $\gamma^2$, and
-$\theta_{\text{true}} \in \mathbb{R}^n$ are the true system parameters.
+$\theta_{\text{true}} \in \mathbb{R}^m$ are the true system parameters.
 \VK{In the case of an ARX model, it might be more prudent to say that
 $w[k]$ is a disturbance, and thus also part of $\phi[k]$?}
 The system (\ref{eq:sysmodel}) can be modeled using any model structure that
@@ -38,7 +38,8 @@ and similarly in the FIR case we have
                 u_{[k-1:k-n]}  
         \end{bmatrix}
 \end{equation}
-where $n$ is the order of the system. \cite{ljung_system_1999}
+where $n$ is the order of the system. \cite{ljung_system_1999} The ARX model 
+will have $m=2n$ number of parameters and the FIR model $m=n$ number of parameters.
 
 The physical plant $\mathcal{P}$ is connected to the operator over network.
 Inputs are sent from the network to the plant, where the outputs are

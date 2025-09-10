@@ -1,0 +1,204 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{ljung_system_1999}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=f7cffd38dd9d98d3fd91ec52f00c4c77}{%
+           family={Ljung},
+           familyi={L\bibinitperiod},
+           given={Lennart},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {eng}%
+      }
+      \list{location}{1}{%
+        {Upper Saddle River, N.J}%
+      }
+      \list{publisher}{1}{%
+        {Prentice Hall}%
+      }
+      \strng{namehash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{fullhash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{fullhashraw}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{bibnamehash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{authorbibnamehash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{authornamehash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{authorfullhash}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \strng{authorfullhashraw}{f7cffd38dd9d98d3fd91ec52f00c4c77}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{abstract}{The field's leading text, now completely updated. Modeling dynamical systems - theory, methodology, and applications. Lennart Ljung's System Identification: Theory for the User is a complete, coherent description of the theory, methodology, and practice of System Identification. This completely revised Second Edition introduces subspace methods, methods that utilize frequency domain data, and general non-linear black box methods, including neural networks and neuro-fuzzy modeling. The book contains many new computer-based examples designed for Ljung's market-leading software, System Identification Toolbox for MATLAB. Ljung combines careful mathematics, a practical understanding of real-world applications, and extensive exercises. He introduces both black-box and tailor-made models of linear as well as non-linear systems, and he describes principles, properties, and algorithms for a variety of identification techniques: Nonparametric time-domain and frequency-domain methods. Parameter estimation methods in a general prediction error setting. Frequency domain data and frequency domain interpretations. Asymptotic analysis of parameter estimates. Linear regressions, iterative search methods, and other ways to compute estimates. Recursive (adaptive) estimation techniques. Ljung also presents detailed coverage of the key issues that can make or break system identification projects, such as defining objectives, designing experiments, controlling the bias distribution of transfer-function estimates, and carefully validating the resulting models. The first edition of System Identification has been the field's most widely cited reference for over a decade. This new edition will be the new text of choice for anyone concerned with system identification theory and practice}
+      \field{edition}{2nd ed}
+      \field{isbn}{978-0-13-244193-3}
+      \field{series}{Prentice {Hall} information and system sciences series}
+      \field{shorttitle}{System identification}
+      \field{title}{System identification: theory for the user}
+      \field{year}{1999}
+    \endentry
+    \entry{chong_tutorial_2019}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=76ba61bd4f36239fc97a13db367bebc9}{%
+           family={Chong},
+           familyi={C\bibinitperiod},
+           given={Michelle\bibnamedelima S.},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=0956c32aa7a4b1a9c031eae891b2e051}{%
+           family={Sandberg},
+           familyi={S\bibinitperiod},
+           given={Henrik},
+           giveni={H\bibinitperiod}}}%
+        {{hash=49910419a29e1bed8525231ec1f76819}{%
+           family={Teixeira},
+           familyi={T\bibinitperiod},
+           given={Andre\bibnamedelima M.H.},
+           giveni={A\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Naples, Italy}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{1bf0c258ae1fa52b7fbf33d158ebbb64}
+      \strng{fullhash}{33de9c3dc39855410b48b0ef6d644a91}
+      \strng{fullhashraw}{33de9c3dc39855410b48b0ef6d644a91}
+      \strng{bibnamehash}{33de9c3dc39855410b48b0ef6d644a91}
+      \strng{authorbibnamehash}{33de9c3dc39855410b48b0ef6d644a91}
+      \strng{authornamehash}{1bf0c258ae1fa52b7fbf33d158ebbb64}
+      \strng{authorfullhash}{33de9c3dc39855410b48b0ef6d644a91}
+      \strng{authorfullhashraw}{33de9c3dc39855410b48b0ef6d644a91}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2019 18th {European} {Control} {Conference} ({ECC})}
+      \field{month}{6}
+      \field{title}{A {Tutorial} {Introduction} to {Security} and {Privacy} for {Cyber}-{Physical} {Systems}}
+      \field{urlday}{24}
+      \field{urlmonth}{7}
+      \field{urlyear}{2025}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{968\bibrangedash 978}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.23919/ecc.2019.8795652
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/8795652/
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/8795652/
+      \endverb
+    \endentry
+    \entry{astrom_adaptive_2008}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=1b77956c091010989c5fc2426441bf07}{%
+           family={Åström},
+           familyi={Å\bibinitperiod},
+           given={Karl\bibnamedelima J.},
+           giveni={K\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=bc45bb86744c9b235a38f89146025596}{%
+           family={Wittenmark},
+           familyi={W\bibinitperiod},
+           given={Björn},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Mineola, N.Y}%
+      }
+      \list{publisher}{1}{%
+        {Dover Publications}%
+      }
+      \strng{namehash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{fullhash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{fullhashraw}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{bibnamehash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{authorbibnamehash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{authornamehash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{authorfullhash}{8f4282c413e6048c583bf858b4a5dd2c}
+      \strng{authorfullhashraw}{8f4282c413e6048c583bf858b4a5dd2c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2nd ed., Dover ed}
+      \field{isbn}{978-0-486-46278-3}
+      \field{series}{Dover books on engineering}
+      \field{title}{Adaptive control}
+      \field{year}{2008}
+      \keyw{Adaptive control systems}
+    \endentry
+    \entry{islam_recursive_2019}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=2fb9b6d41b37bc7b9bb66db64b84dfc5}{%
+           family={Islam},
+           familyi={I\bibinitperiod},
+           given={Syed\bibnamedelimb Aseem\bibnamedelima Ul},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod\bibinitdelim U\bibinitperiod}}}%
+        {{hash=248953a478a97620aae286e8282daf9f}{%
+           family={Bernstein},
+           familyi={B\bibinitperiod},
+           given={Dennis\bibnamedelima S.},
+           giveni={D\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{fullhash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{fullhashraw}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{bibnamehash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{authorbibnamehash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{authornamehash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{authorfullhash}{463b1b358a06b0d1847979ea31ed9887}
+      \strng{authorfullhashraw}{463b1b358a06b0d1847979ea31ed9887}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1066-033X, 1941-000X}
+      \field{journaltitle}{IEEE Control Systems}
+      \field{month}{6}
+      \field{number}{3}
+      \field{title}{Recursive {Least} {Squares} for {Real}-{Time} {Implementation} [{Lecture} {Notes}]}
+      \field{urlday}{8}
+      \field{urlmonth}{8}
+      \field{urlyear}{2025}
+      \field{volume}{39}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{82\bibrangedash 85}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/MCS.2019.2900788
+      \endverb
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/document/8716768/
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/document/8716768/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
