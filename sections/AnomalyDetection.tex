@@ -12,9 +12,35 @@ of any parameter vector $\theta^*$ given the data, we can define the
 likelihood ratio test
 \begin{equation}
     R_L = \frac{\sup\limits_{\theta \in \Mp}
-    \LH(\theta \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})}
+    \LH(\theta \vert y_{[0:k]}, u_{[0:k]})}
     {\sup\limits_{\tU \in \mathbb{R}^m}
-    \LH(\tU \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})} \in (0,1]
+    \LH(\tU \vert y_{[0:k]}, u_{[0:k]})} \in (0,1]
 \end{equation}
 where a $R_L$ close to one means  $\hyp_0$ is likely to be true, and
 inversely that a low $R_L$ close to zero means that $\hyp_1$ is likely true.
+\VK{Since I will be using E[k] to calculate these likelihoods, I need to include the forgetting
+factor $\lambda$ in the likelihoods. I am unsure how to do that notationally. While it might
+not be as formally correct, it does make sense in the context of changing parameters.}
+
+To actually find an expression for these likelihoods, we need to first find the probability
+$p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Starting with the model (\ref{eq:sysmodel}), we
+can rephrase the (stochastic) output $Y[t]$ as
+\begin{equation}
+    p(Y[k]\big{|} \theta^*,  y_{[k-1:k-n]}, u_{[k-1:k-n]}) =
+    \mathcal{N}(Y[k]\big{|}\phi[t]\theta^*, \gamma^2)
+\end{equation}
+Using Bayes rule, we can write the joint probability
+\begin{equation}
+    \small
+    \begin{aligned}
+        &p(Y[k],Y[k-1]\big{|}\theta^*,y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
+        =& p(Y[k]\big{|}Y[k-1]=y[k-1], \theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]})= \\
+        =& \mathcal{N}(Y[k]\big{|}\phi[k]\theta^*, \gamma^2)\cdot
+        \mathcal{N}(Y[k-1]\big{|}\phi[k-1]\theta^*, \gamma^2)
+\end{aligned}
+\end{equation}
+This can be done repeatedly, all the way until $k=1$, at which point we get
+\begin{equation}
+    p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]}) 
+    = \prod\limits_{i=1}^k \mathcal{N}(Y[i]\big{|}\phi[i]\theta^*, \gamma^2)
+\end{equation}
