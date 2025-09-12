@@ -7,40 +7,90 @@ define also $\tU$ as the unconstrained solution to (\ref{eq:costfunction}), disr
 the constraints (\ref{eq:eqconst}-\ref{eq:elliptconst}).
 Let $\hyp_0$ be the null hypothesis that the input-output data conforms to our predefined model set,
 and $\hyp_1$ be the hypothesis that it does not.
-Using the likelihood $\LH(\theta^* \vert y_{[k-1:k-n]}, u_{[k-1:k-n]})$
+Using the likelihood $\LH(\theta^* \big{\vert} y_{[k-1:k-n]}, u_{[k-1:k-n]})$
 of any parameter vector $\theta^*$ given the data, we can define the
 likelihood ratio test
 \begin{equation}
     R_L = \frac{\sup\limits_{\theta \in \Mp}
-    \LH(\theta \vert y_{[0:k]}, u_{[0:k]})}
+    \LH(\theta \big{\vert} y_{[0:k]}, u_{[0:k]})}
     {\sup\limits_{\tU \in \mathbb{R}^m}
-    \LH(\tU \vert y_{[0:k]}, u_{[0:k]})} \in (0,1]
+    \LH(\tU \big{\vert} y_{[0:k]}, u_{[0:k]})} \in (0,1]
 \end{equation}
 where a $R_L$ close to one means  $\hyp_0$ is likely to be true, and
 inversely that a low $R_L$ close to zero means that $\hyp_1$ is likely true.
 \VK{Since I will be using E[k] to calculate these likelihoods, I need to include the forgetting
 factor $\lambda$ in the likelihoods. I am unsure how to do that notationally. While it might
-not be as formally correct, it does make sense in the context of changing parameters.}
+not be as formally correct, it does make sense in the context of changing parameters.
+Probably I will reformulate the problem as some kind of weighted Maximum likelihood.}
 
 To actually find an expression for these likelihoods, we need to first find the probability
 $p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Starting with the model (\ref{eq:sysmodel}), we
 can rephrase the (stochastic) output $Y[t]$ as
 \begin{equation}
-    p(Y[k]\big{|} \theta^*,  y_{[k-1:k-n]}, u_{[k-1:k-n]}) =
-    \mathcal{N}(Y[k]\big{|}\phi[t]\theta^*, \gamma^2)
+    p(Y[k]\big{\vert} \theta^*,  y_{[k-1:k-n]}, u_{[k-1:k-n]}) =
+    \mathcal{N}(Y[k]\big{\vert}\phi[t]\theta^*, \gamma^2)
 \end{equation}
 Using Bayes rule, we can write the joint probability
 \begin{equation}
     \small
     \begin{aligned}
-        &p(Y[k],Y[k-1]\big{|}\theta^*,y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
-        =& p(Y[k]\big{|}Y[k-1]=y[k-1], \theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]})= \\
-        =& \mathcal{N}(Y[k]\big{|}\phi[k]\theta^*, \gamma^2)\cdot
-        \mathcal{N}(Y[k-1]\big{|}\phi[k-1]\theta^*, \gamma^2)
+        &p(Y[k],Y[k-1]\big{\vert}\theta^*,y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
+        =& p(Y[k]\big{\vert}Y[k-1]=y[k-1], \theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]})\cdot \\
+        &\cdot p(Y[k-1]\big{\vert}\theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
+        =& \mathcal{N}(Y[k]\big{\vert}\phi[k]\theta^*, \gamma^2)\cdot
+        \mathcal{N}(Y[k-1]\big{\vert}\phi[k-1]\theta^*, \gamma^2)
 \end{aligned}
+\notag
 \end{equation}
+\VK{Happily accepting criticism on making the above equation less awful to read.
+Or maybe just move this whole likelihood derivation to a proof?}
 This can be done repeatedly, all the way until $k=1$, at which point we get
 \begin{equation}
-    p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]}) 
+    p(Y_{[0:k]}\big{\vert}\theta^*, u_{[0:k]}) 
     = \prod\limits_{i=1}^k \mathcal{N}(Y[i]\big{|}\phi[i]\theta^*, \gamma^2)
+    \label{eq:jointprob}
 \end{equation}
+Next, we take the log-likelihood of (\ref{eq:jointprob}) with regards to $\theta^*$
+\begin{equation}
+    \begin{aligned}
+        &\log \LH(\theta^*\big{|} y_{[0:k]}, u_{[0:k]}) = \\ =\sum\limits_{i=1}^{k}
+        &-\frac{1}{2\gamma^2}(y[t]-\phi[i]\theta^*)^T(y[t]-\phi[i]\theta^*)
+    \end{aligned}
+    \label{eq:loglikelihood}
+\end{equation}
+
+By expanding (\ref{eq:loglikelihood}), and substituting into $\log R_L$, we get
+\begin{equation}
+    \begin{aligned}
+        \log R_L = \frac{1}{\gamma^2}\sum\limits_{i=1}^{k} \big{[}
+        y[i]^T\phi[t]\left(\theta - \theta_U\right)\\
+        -\frac{1}{2}\left(\theta - \theta_U\right)^T
+        \phi[i]^T\phi[i]\left(\theta - \theta_U\right)\big{]}
+    \end{aligned}
+\end{equation}
+\VK{Here I introduce $\lambda$ (through $E[i],F[i]$) into the likelihood out of nowhere.
+I am aware and will fix it.}
+Thus, the likelihood ratio can be evaluated at each time update as such
+\begin{equation}
+    R_L = \exp\left( F[k]\left(\theta - \theta_U\right) - 
+    \frac{1}{2}\left(\theta - \theta_U\right)^TE[k]\left(\theta - \theta_U\right)  \right)
+    \label{eq:likelihoodratio}
+\end{equation}
+and we have for a combined parameter estimator and anomaly detector
+\begin{algorithm}
+    \caption{Real Time Model Learning with Parameter Constraints and Anomaly Detection}
+    \label{alg:anomalydetector}
+    \Input{$\tC_0, \Pinv, A, b, Q, \gamma^2$}
+    $E[0], F[0] \gets 0$\;
+    $k \gets 0$\;
+    $\nullA \gets \ker A$\;
+    \While{$k\leq T$}{
+        Update $E[k], F[k], \Pinv[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
+        Update $\overline{E}[k], \overline{F}[k]$ according to (\ref{eq:Econst}, \ref{eq:Fconst})\;
+        Solve the optimization problem (\ref{eq:Jconst}-\ref{eq:redelliptconst}) for $\tC$\;
+        Solve the unconstrained optimization problem (\ref{eq:costfunction}) for $\theta_U$\;
+        $\theta \gets A^+b + \nullA\tC$\;
+        Update $R_L$ according to (\ref{eq:likelihoodratio})\;
+        $k \gets k+1$\;
+    }
+\end{algorithm}
