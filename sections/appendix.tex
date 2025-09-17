@@ -32,3 +32,34 @@
     gather all terms that are quadratic in $\tC$ into $\overline{E}[k]$ and all terms that are linear in
     $\tC$ into $\overline{F}[k]$.
 \end{proof}
+
+\subsection{Proof of lemma \ref{lem:tvsysmodel}}
+\label{app:likelihoodproof}
+Starting from (\ref{eq:tvsysmodel}), write out the probability of
+$y[i]$ given the $n$ latest data points in $\phi[i]$
+\begin{equation*}
+    p(y[i]\big{\vert} \theta^*,  y_{[i-1:i-n]}, u_{[i-1:i-n]}) =
+    \mathcal{N}(Y[i]\big{\vert}\phi[i]\theta^*, \frac{\gamma^2}{\lambda^{k-i}}).
+\end{equation*}
+Using Bayes rule, we can write the joint probability of $y[i]$ and $y[i-1$], much
+in the same way as in \cite[Lemma 5.1]{ljung_system_1999}
+\begin{equation*}
+    \small
+    \begin{aligned}
+        &p(y[i],y[i-1]\big{\vert}\theta^*,y_{[i-2:i-n-1]}, u_{[i-1:i-n-1]}) = \\
+        =& p(y[i]\big{\vert}y[i-1]=y[i-1], \theta^*, y_{[i-2:i-n-1]}, u_{[i-1:i-n-1]})\cdot \\
+        &\cdot p(y[i-1]\big{\vert}\theta^*, y_{[i-2:i-n-1]}, u_{[i-1:i-n-1]}) = \\
+        =& \mathcal{N}(y[i]\big{\vert}\phi[k]\theta^*, \frac{\gamma^2}{\lambda^{k-i}})\cdot
+        \mathcal{N}(y[i-1]\big{\vert}\phi[i-1]\theta^*, \frac{\gamma^2}{\lambda^{k-i}}).
+\end{aligned}
+\notag
+\end{equation*}
+This can be done repeatedly, all the way until $k=1$, at which point we get
+\begin{equation*}
+    p(y_{[0:k]}\big{\vert}\theta^*, u_{[0:k]}) 
+    = \prod\limits_{i=1}^k \mathcal{N}(y[i]\big{|}\phi[i]\theta^*, \frac{\gamma^2}{\lambda^{k-i}})
+\end{equation*}
+Next, take the log-likelihood with regards to $\theta^*$ to get (\ref{eq:loglikelihood}).
+By inspection, it can be seen that (\ref{eq:loglikelihood}) attains its extremum 
+with regards to $\theta^*$ at the same point as (\ref{eq:costfunction}), which 
+concludes the proof.
