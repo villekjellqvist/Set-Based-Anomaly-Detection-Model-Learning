@@ -22,6 +22,8 @@ inversely that a low $R_L$ close to zero means that $\hyp_1$ is likely true.
 factor $\lambda$ in the likelihoods. I am unsure how to do that notationally. While it might
 not be as formally correct, it does make sense in the context of changing parameters.
 Probably I will reformulate the problem as some kind of weighted Maximum likelihood.}
+\AT{Backup solutions. Treat opt. problem as L2 reg. or just do the 
+likelihood tests on the simple non weighted case.}
 
 To actually find an expression for these likelihoods, we need to first find the probability
 $p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Starting with the model (\ref{eq:sysmodel}), we
@@ -85,7 +87,7 @@ and we have for a combined parameter estimator and anomaly detector
     $k \gets 0$\;
     $\nullA \gets \ker A$\;
     \While{$k\leq T$}{
-        Update $E[k], F[k], \Pinv[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
+        Update $E[k], F[k], P[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
         Update $\overline{E}[k], \overline{F}[k]$ according to (\ref{eq:Econst}, \ref{eq:Fconst})\;
         Solve the optimization problem (\ref{eq:Jconst}-\ref{eq:redelliptconst}) for $\tC$\;
         Solve the unconstrained optimization problem (\ref{eq:costfunction}) for $\theta_U$\;
