@@ -116,6 +116,11 @@ $E[k], F[k]$ and $\lambda^{k+1}\Pinv$ can be written recursively
     F[k+1] &= \lambda F[k] + (y[k])^T\phi[k] \label{eq:Frec}\\
     P[k+1] &= \lambda P[k]; \, P[0] = \lambda\Pinv \label{eq:Prec}
 \end{align}
+\VK{Possibly, the whole problem could be represented in terms of the dual.
+The one would need instead to save $F[k]^TE[k]^{-1}F[k]$ and $E[k]^{-1}F[k]$,
+whose elements (I think) does not grow to infinity as $k \rightarrow \infty$.
+At the cost of having to do matrix inversions, although maybe the matrix inversion
+lemma could help.}
 We can now express the constrained optimization problem as the following lemma.
 
 \begin{lemma}
@@ -152,7 +157,7 @@ algorithm \ref{alg:constrainedlearning}.
     $k \gets 0$\;
     $\nullA \gets \ker A$\;
     \While{$k\leq T$}{
-        Update $E[k], F[k], \Pinv[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
+        Update $E[k], F[k], P[k]$ according to (\ref{eq:Erec}-\ref{eq:Prec})\;
         Update $\overline{E}[k], \overline{F}[k]$ according to (\ref{eq:Econst}, \ref{eq:Fconst})\;
         Solve the optimization problem (\ref{eq:Jconst}-\ref{eq:redelliptconst}) for $\tC$\;
         $\theta \gets A^+b + \nullA\tC$\;

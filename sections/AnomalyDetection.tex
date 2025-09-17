@@ -9,12 +9,12 @@ Let $\hyp_0$ be the null hypothesis that the input-output data conforms to our p
 and $\hyp_1$ be the hypothesis that it does not.
 Using the likelihood $\LH(\theta^* \big{\vert} y_{[k-1:k-n]}, u_{[k-1:k-n]})$
 of any parameter vector $\theta^*$ given the data, we can define the
-log-likelihood ratio test
+likelihood ratio test
 \begin{equation}
-    R_L = \ln\left(\frac{\sup\limits_{\theta \in \Mp}
+    R_L = \frac{\sup\limits_{\theta \in \Mp}
     \LH(\theta \big{\vert} y_{[0:k]}, u_{[0:k]})}
     {\sup\limits_{\tU \in \mathbb{R}^m}
-    \LH(\tU \big{\vert} y_{[0:k]}, u_{[0:k]})}\right)
+    \LH(\tU \big{\vert} y_{[0:k]}, u_{[0:k]})} \in (0,1]
 \end{equation}
 where a $R_L$ close to one means  $\hyp_0$ is likely to be true, and
 inversely that a low $R_L$ close to zero means that $\hyp_1$ is likely true.
@@ -24,72 +24,59 @@ not be as formally correct, it does make sense in the context of changing parame
 Probably I will reformulate the problem as some kind of weighted Maximum likelihood.}
 
 To actually find an expression for these likelihoods, we need to first find the probability
-$p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Firstly, we need to consider the influence
-of $\Pinv$ on the estimated $\theta$. It is clear from (\ref{eq:costfunction})
-that for large $k$ and/or small $\Pinv$ that the initial guess $\theta_0$
-has a negligible effect on the estimate. We therefore make the following
-assumption henceforth.
-\begin{assumption}
-    \label{ass:smallP0}
-    $\Pinv$ is small enough and the number of collected
-    data points $k$ is large enough that
-    \begin{equation}
-        \begin{aligned}
-            \arg\min\limits_{\theta} J[k](\theta) &\triangleq \notag
-        \\ \triangleq \arg\min\limits_{\theta} &
-            \sum\limits_{i=1}^k \left[
-            \lambda^{k-i}(y[i]-\phi[i]\theta)^T(y[i]-\phi[i]\theta) \right]
-        \end{aligned}
-    \end{equation}
-    is a good approximation of (\ref{eq:costfunction}). We therefore
-    omit all terms containing $\Pinv$ from $\overline{E}[k],
-    \overline{F}[k], E[k]$ and $F[k]$ in the sequel.
-\end{assumption}
-
-Because we have introduced a forgetting factor $\lambda$
-in the parameter estimation, the model (\ref{eq:sysmodel})
-is not actually the one we are estimating. The forgetting factor can be
-interpreted as a time changing variance, which we state as the following lemma.
-\begin{lemma}
-    \label{lem:tvsysmodel}
-    Under assumption \ref{ass:smallP0}, the cost function (\ref{eq:costfunction})
-    is the maximum likelihood estimation of $\theta$ given the data generating model
-    \begin{equation}
-        y[i] = \phi[i]\theta_{\text{true}} + w_\lambda[i] \qquad w_\lambda[i]
-        \sim \mathcal{N}\left(w_\lambda\big{\vert} 0, \frac{\gamma^2}{\lambda^{k-i}}\right)
-        \label{eq:tvsysmodel}
-    \end{equation}
-    for all $i<k$, with the log-likelihood function
-    \begin{equation}
-        \begin{aligned}
-            \ln&~\LH(\theta^*\big{|} y_{[0:k]}, u_{[0:k]}) = \sum\limits_{i=1}^{k}
-            -\frac{k}{2}\ln\left(\frac{2\pi\gamma^2}{\lambda^{k-i}}\right) -
-            \\-&
-            \frac{\lambda^{k-i}}{2\gamma^2}(y[i]-\phi[i]\theta^*)^T(y[i]-\phi[i]\theta^*)
-        \end{aligned}
-        \label{eq:loglikelihood}
-        \end{equation}
-    Proof: See appendix \ref{app:likelihoodproof}
-\end{lemma}
-By expanding (\ref{eq:loglikelihood}), and substituting into $R_L$, we get
+$p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Starting with the model (\ref{eq:sysmodel}), we
+can rephrase the (stochastic) output $Y[t]$ as
+\begin{equation}
+    p(Y[k]\big{\vert} \theta^*,  y_{[k-1:k-n]}, u_{[k-1:k-n]}) =
+    \mathcal{N}(Y[k]\big{\vert}\phi[t]\theta^*, \gamma^2)
+\end{equation}
+Using Bayes rule, we can write the joint probability
+\begin{equation}
+    \small
+    \begin{aligned}
+        &p(Y[k],Y[k-1]\big{\vert}\theta^*,y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
+        =& p(Y[k]\big{\vert}Y[k-1]=y[k-1], \theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]})\cdot \\
+        &\cdot p(Y[k-1]\big{\vert}\theta^*, y_{[k-2:k-n-1]}, u_{[k-1:k-n-1]}) = \\
+        =& \mathcal{N}(Y[k]\big{\vert}\phi[k]\theta^*, \gamma^2)\cdot
+        \mathcal{N}(Y[k-1]\big{\vert}\phi[k-1]\theta^*, \gamma^2)
+\end{aligned}
+\notag
+\end{equation}
+\VK{Happily accepting criticism on making the above equation less awful to read.
+Or maybe just move this whole likelihood derivation to a proof?}
+This can be done repeatedly, all the way until $k=1$, at which point we get
+\begin{equation}
+    p(Y_{[0:k]}\big{\vert}\theta^*, u_{[0:k]}) 
+    = \prod\limits_{i=1}^k \mathcal{N}(Y[i]\big{|}\phi[i]\theta^*, \gamma^2)
+    \label{eq:jointprob}
+\end{equation}
+Next, we take the log-likelihood of (\ref{eq:jointprob}) with regards to $\theta^*$
 \begin{equation}
     \begin{aligned}
-        R_L = \sum\limits_{i=1}^{k}\frac{\lambda^{k-i}}{\gamma^2} \big{[}
+        &\log \LH(\theta^*\big{|} y_{[0:k]}, u_{[0:k]}) = \\ =\sum\limits_{i=1}^{k}
+        &-\frac{1}{2\gamma^2}(y[t]-\phi[i]\theta^*)^T(y[t]-\phi[i]\theta^*)
+    \end{aligned}
+    \label{eq:loglikelihood}
+\end{equation}
+
+By expanding (\ref{eq:loglikelihood}), and substituting into $\log R_L$, we get
+\begin{equation}
+    \begin{aligned}
+        \log R_L = \frac{1}{\gamma^2}\sum\limits_{i=1}^{k} \big{[}
         y[i]^T\phi[t]\left(\theta - \theta_U\right)\\
         -\frac{1}{2}\left(\theta - \theta_U\right)^T
         \phi[i]^T\phi[i]\left(\theta - \theta_U\right)\big{]}
     \end{aligned}
 \end{equation}
-
+\VK{Here I introduce $\lambda$ (through $E[i],F[i]$) into the likelihood out of nowhere.
+I am aware and will fix it.}
 Thus, the likelihood ratio can be evaluated at each time update as such
 \begin{equation}
-    R_L = \left( F[k]\left(\theta - \theta_U\right) - 
+    R_L = \exp\left( F[k]\left(\theta - \theta_U\right) - 
     \frac{1}{2}\left(\theta - \theta_U\right)^TE[k]\left(\theta - \theta_U\right)  \right)
     \label{eq:likelihoodratio}
 \end{equation}
-
-and we have a combined parameter estimator and anomaly detector, as seen
-seen in algorithm \ref{alg:anomalydetector}.
+and we have for a combined parameter estimator and anomaly detector
 \begin{algorithm}
     \caption{Real Time Model Learning with Parameter Constraints and Anomaly Detection}
     \label{alg:anomalydetector}
