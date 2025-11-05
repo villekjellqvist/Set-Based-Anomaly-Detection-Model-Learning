@@ -22,10 +22,10 @@ ARX and FIR model structures. In the ARX case, we have
 \begin{equation}
         \begin{split}
                 \phi[k] &= \begin{bmatrix}
-                        y_{[k-1:k-n]} & u_{[k-1:k-n]}  
+                        -y_{[k-1:k-n]} & u_{[k-1:k-n]}  
                 \end{bmatrix} \\
                 y_{[k-1:k-n]} &= \begin{bmatrix}
-                        y[k-1] & y[k-2] & \cdots & y[k-n]
+                        -y[k-1] & -y[k-2] & \cdots & -y[k-n]
                 \end{bmatrix} \\
                 u_{[k-1:k-n]}  &= \begin{bmatrix}
                         u[k-1] & u[k-2] & \cdots & u[k-n]

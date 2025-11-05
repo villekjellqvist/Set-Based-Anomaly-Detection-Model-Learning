@@ -2,36 +2,34 @@
 
 \subsection{Proof of lemma~\ref{lemma:constproblem}}
 \label{app:constproof}
-\begin{proof}
-    By assumption \ref{ass:NA_ass}, we have that $\Pinv A^+b = (A^+b)^T\Pinv = 0$.
-    Using this fact and (\ref{eq:thetanull}) we expand from (\ref{eq:EFG})
-    \begin{equation}
-        \begin{gathered}
-            \theta^T\left(\Pinv[k] + E[k]\right)\theta = \\
-            = \sum\limits_{i=1}^k \bigg{[} \lambda^{k-i}\bigg{(}(A^+b)^T(\phi[i])^T\phi[i]A^+b
-            + \\
-            + 2(A^+b)^T(\phi[i])^T\phi[i]\nullA\tC + \tC^T\nullA^T(\phi[i])^T\phi[i]\nullA\tC \bigg{)} \bigg{]} + \\
-            + \tC\nullA^T\Pinv\nullA\tC\lambda^{k+1}
-        \end{gathered}
-        \label{eq:expandedE}
-    \end{equation}
-    Likewise, we can do the same for 
-    \begin{equation}
-        \begin{gathered}
-            \left(\theta_0^T\Pinv[k] + F[k]\right)\theta = \\
-            = \sum\limits_{i=1}^k \lambda^{k-i}\left((y[k])^T\phi[k]A^+b + (y[k])^T\phi[k]\nullA\tC\right) + \\
-            + \lambda^{k+1}\tC_0^T\nullA^T\Pinv[k]\nullA\tC
-        \end{gathered}
-        \label{eq:expandedF}
-    \end{equation}
-    To find the minimizing $\tC$ with respect to (\ref{eq:EFG}), we can discard
-    all terms in (\ref{eq:expandedE}) and (\ref{eq:expandedF}) that do not depend on $\tC$.
-    To get the remaining terms into their recursive form, replace all instances of
-    $\lambda^{k+1}\Pinv$ with $P[k]$, $\lambda^{k-i}(\phi[i])^T\phi[i]$ with $E[k]$ and
-    $\lambda^{k-i}(y[k])^T\phi[k]$ with $F[k]$. Finally to get (\ref{eq:Econst}) and (\ref{eq:Fconst}),
-    gather all terms that are quadratic in $\tC$ into $\overline{E}[k]$ and all terms that are linear in
-    $\tC$ into $\overline{F}[k]$.
-\end{proof}
+By assumption \ref{ass:NA_ass}, we have that $\Pinv A^+b = (A^+b)^T\Pinv = 0$.
+Using this fact and (\ref{eq:thetanull}) we expand from (\ref{eq:EFG})
+\begin{equation}
+    \begin{gathered}
+        \theta^T\left(\Pinv[k] + E[k]\right)\theta = \\
+        = \sum\limits_{i=1}^k \bigg{[} \lambda^{k-i}\bigg{(}(A^+b)^T(\phi[i])^T\phi[i]A^+b
+        + \\
+        + 2(A^+b)^T(\phi[i])^T\phi[i]\nullA\tC + \tC^T\nullA^T(\phi[i])^T\phi[i]\nullA\tC \bigg{)} \bigg{]} + \\
+        + \tC\nullA^T\Pinv\nullA\tC\lambda^{k+1}
+    \end{gathered}
+    \label{eq:expandedE}
+\end{equation}
+Likewise, we can do the same for 
+\begin{equation}
+    \begin{gathered}
+        \left(\theta_0^T\Pinv[k] + F[k]\right)\theta = \\
+        = \sum\limits_{i=1}^k \lambda^{k-i}\left((y[k])^T\phi[k]A^+b + (y[k])^T\phi[k]\nullA\tC\right) + \\
+        + \lambda^{k+1}\tC_0^T\nullA^T\Pinv[k]\nullA\tC
+    \end{gathered}
+    \label{eq:expandedF}
+\end{equation}
+To find the minimizing $\tC$ with respect to (\ref{eq:EFG}), we can discard
+all terms in (\ref{eq:expandedE}) and (\ref{eq:expandedF}) that do not depend on $\tC$.
+To get the remaining terms into their recursive form, replace all instances of
+$\lambda^{k+1}\Pinv$ with $P[k]$, $\lambda^{k-i}(\phi[i])^T\phi[i]$ with $E[k]$ and
+$\lambda^{k-i}(y[k])^T\phi[k]$ with $F[k]$. Finally to get (\ref{eq:Econst}) and (\ref{eq:Fconst}),
+gather all terms that are quadratic in $\tC$ into $\overline{E}[k]$ and all terms that are linear in
+$\tC$ into $\overline{F}[k]$.
 
 \subsection{Proof of lemma \ref{lem:tvsysmodel}}
 \label{app:likelihoodproof}

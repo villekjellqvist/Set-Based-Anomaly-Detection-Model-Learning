@@ -1,0 +1,64 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{soderstrom_system_nodate}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=ada4b0ddbf4a79ac7d504bd0ebd149ac}{%
+           family={Söderström},
+           familyi={S\bibinitperiod},
+           given={Torsten},
+           giveni={T\bibinitperiod}}}%
+        {{hash=36fee71d3ae6d96d0ed40d1edb70559a}{%
+           family={Stoica},
+           familyi={S\bibinitperiod},
+           given={Petre},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {eng}%
+      }
+      \list{location}{1}{%
+        {New York, NY}%
+      }
+      \list{publisher}{1}{%
+        {Prentice-Hall}%
+      }
+      \strng{namehash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{fullhash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{fullhashraw}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{bibnamehash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{authorbibnamehash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{authornamehash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{authorfullhash}{df47ab072e914f9e46789f1c4fae4cb0}
+      \strng{authorfullhashraw}{df47ab072e914f9e46789f1c4fae4cb0}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Reprint}
+      \field{isbn}{978-0-13-881236-2 978-0-13-127606-2}
+      \field{series}{Prentice {Hall} international series in systems and control engineering}
+      \field{title}{System identification}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

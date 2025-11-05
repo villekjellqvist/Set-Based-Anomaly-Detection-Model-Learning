@@ -24,7 +24,7 @@ not be as formally correct, it does make sense in the context of changing parame
 Probably I will reformulate the problem as some kind of weighted Maximum likelihood.}
 
 To actually find an expression for these likelihoods, we need to first find the probability
-$p(Y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Firstly, we need to consider the influence
+$p(y_{[0:k]}\big{|}\theta^*, u_{[0:k]})$. Firstly, we need to consider the influence
 of $\Pinv$ on the estimated $\theta$. It is clear from (\ref{eq:costfunction})
 that for large $k$ and/or small $\Pinv$ that the initial guess $\theta_0$
 has a negligible effect on the estimate. We therefore make the following
@@ -83,7 +83,7 @@ By expanding (\ref{eq:loglikelihood}), and substituting into $R_L$, we get
 
 Thus, the likelihood ratio can be evaluated at each time update as such
 \begin{equation}
-    R_L = \left( F[k]\left(\theta - \theta_U\right) - 
+    R_L = \frac{1}{\gamma^2}\left( F[k]\left(\theta - \theta_U\right) - 
     \frac{1}{2}\left(\theta - \theta_U\right)^TE[k]\left(\theta - \theta_U\right)  \right)
     \label{eq:likelihoodratio}
 \end{equation}

@@ -1,0 +1,50 @@
+\documentclass{article}
+\input{preamble.tex}
+\begin{document}
+The posterior distribution of the measurements given the model parameters is
+\begin{equation*}
+    p(y_{[0:k]}\big{\vert}\theta, u_{[0:k]}) 
+    = \prod\limits_{i=1}^k \mathcal{N}(y[i]\big{|}\varphi[i]^T\theta, \frac{\gamma^2}{\lambda^{k-i}})
+\end{equation*}
+where 
+\begin{equation}
+        \begin{split}
+                \varphi[k]^T &= \begin{bmatrix}
+                        y_{[k-1:k-n]} & u_{[k-1:k-n]}  
+                \end{bmatrix} \\
+                y_{[k-1:k-n]} &= \begin{bmatrix}
+                        y[k-1] & y[k-2] & \cdots & y[k-n]
+                \end{bmatrix} \\
+                u_{[k-1:k-n]}  &= \begin{bmatrix}
+                        u[k-1] & u[k-2] & \cdots & u[k-n]
+                \end{bmatrix}
+        \end{split}
+\end{equation}
+and $\lambda \in (0,1])$ is a forgetting factor.
+Define 
+\begin{equation}
+\Sigma = \text{diag}\begin{bmatrix}
+    \frac{\gamma^2}{\lambda^k} & \frac{\gamma^2}{\lambda^{k-1}} & \cdots &
+    \frac{\gamma^2}{\lambda^0}
+\end{bmatrix}
+\end{equation}
+and
+\begin{equation}
+    \Phi_{[0:k]} = \begin{bmatrix}
+        \varphi[0] & \varphi[1] & \cdots & \varphi[k]
+    \end{bmatrix}^T
+\end{equation}
+giving us the squared Mahalonobis distance $D_M$
+\begin{equation}
+    D_M = (y_{[0:k]} - \Phi_{[0:k]}\theta)^T\Sigma^{-1}(y_{[0:k]} - \Phi_{[0:k]}\theta)
+\end{equation}
+
+By some well known results\cite{aggarwal_outlier_2017} we have that 
+$D_M \sim \chi^2_k$ and we can construct the model goodness of fit test
+\begin{equation}
+    P(\chi^2_k \leq D_M) < \alpha
+\end{equation}
+where $\alpha \in (0,1)$ is a user specified bound.
+
+\printbibliography
+\end{document}
