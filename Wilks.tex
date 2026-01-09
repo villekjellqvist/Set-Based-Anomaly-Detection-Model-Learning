@@ -129,7 +129,12 @@ for the second order term $\kappa$:
 and the first order term $\ell'(\hat{\theta})(\theta_\star-\hat{\theta})$
 vanishes by definition, since the optimal $\hat{\theta}$ occurs at $\ell'(\theta) = 0$  giving us
 \begin{equation}
-    \ell(\theta_\star) \rightarrow \ell(\hat{\theta}) - \frac{1}{2}E_N^TE_N
+    \begin{split}
+        \ell(\theta_\star) \approx \ell(\hat{\theta}) - \frac{1}{2}E_N^TE_N
+        \\
+        \ell(\hat{\theta}) \approx \ell(\theta_\star) + \frac{1}{2}E_N^TE_N
+    \end{split}
+    \label{eq:taylor1}
 \end{equation}
 
 Now, we look at the constrained estimate
@@ -150,7 +155,7 @@ $\theta$ are black, purple, and red, respectively.
         \ell_C'(\theta) =& -\frac{1}{\gamma^2}
         \sum\limits_{k=0}^N
         \textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA\theta_C}
-        + \textcolor{purple}{\nullA^T\varphi[k]\varphi^T[k](A^+b)+\nullA^T\varphi[k]y[k]}\\
+        + \textcolor{purple}{\nullA^T\varphi[k]\varphi^T[k](A^+b)-\nullA^T\varphi[k]y[k]}\\
         %%%
         \ell_C''(\theta) =& -\frac{1}{\gamma^2}
         \sum\limits_{k=0}^N\textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA}
@@ -180,22 +185,35 @@ This allows us to construct the \emph{constrained} estimation error
 \end{equation}
 Proceeding exactly as in the unconstrained case, we have
 \begin{equation}
-    \ell_C(\theta_{\star,C}) \rightarrow \ell_C(\hat{\theta}_C) - \frac{1}{2}E_{N,C}^TE_{N,C}
+    \begin{split}
+        \ell_C(\theta_{\star,C}) &\approx \ell_C(\hat{\theta}_C) - \frac{1}{2}E_{N,C}^T E_{N,C}
+        \\
+        \ell_C(\hat{\theta}_C) &\approx \ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C}
+    \end{split}
+    \label{eq:taylor2}
 \end{equation}
 
-With both these Taylor series in hand, we can write out an asymptotic expression for 
+With both these Taylor approximations (\ref{eq:taylor1}) and (\ref{eq:taylor2})
+in hand, we can write out an asymptotic expression for 
 the likelihood ratio.
 
 \begin{equation}
-    R_L \rightarrow -2\left(\ell(\hat{\theta}) - \ell_C(\hat{\theta}_C) -
-    \frac{1}{2}\left(E_N^TE_N - E_{N,C}^TE_{N,C}\right) \right)
+    \begin{split}
+        R_L &\rightarrow -2\left(\ell(\hat{\theta}) - \ell_C(\hat{\theta}_C)\right)
+        \\
+        R_L &\rightarrow -2\left(
+            (\ell(\theta_\star) + \frac{1}{2}E_N^TE_N)
+            - (\ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C})
+        \right)
+    \end{split}
 \end{equation}
 Now, this next argument is bordering on circular, but is nevertheless an important last step
-to find the (asymptotic) distribution of $R_L$. Given (\ref{eq:asymptotic}, \ref{eq:asymptotic_constrained})
-we can state that the constrained and unconstrained estimate of $\theta$ are related by the affine
-projection (\ref{eq:projection}) s.t. $\hat{\theta} = A^+b + \nullA\hat{\theta}_C$ under $\mathcal{H}_1$.
-Expanding $\hat{\theta}$ in this way in $\ell(\hat{\theta})$ gives equality in 
-$\ell(\hat{\theta}) = \ell_C(\hat{\theta}_C)$. The likelihood ratio then approaches:
+to find the (asymptotic) distribution of $R_L$. Under $\mathcal{H}_1$
+we can state that the constrained and unconstrained log likelihoods $\ell(\theta_\star)$ and
+$\ell_C{\theta_{\star,C}}$ are related by the affine
+projection (\ref{eq:projection}) s.t. $\theta_\star = A^+b + \nullA\theta_{\star,C}$.
+Expanding $y[k] = \varphi^T\theta_\star$ with this projection gives gives equality in 
+$\ell(\theta_\star) = \ell_C{\theta_{\star,C}}$. The likelihood ratio then approaches:
 \begin{equation}
     R_L \rightarrow E_N^TE_N - E_{N,C}^TE_{N,C}
 \end{equation}

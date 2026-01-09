@@ -1,0 +1,16 @@
+\documentclass[preview]{standalone}
+\input{preamble.tex}
+\begin{document}
+\begin{equation*}
+\begin{split} \Sigma &= 
+    \begin{pmatrix}
+    (\Phi\Phi^T)^{-1} & K_A(K_A^T\Phi\Phi^TK_A)^{-1} \\
+    (K_A^T\Phi\Phi^TK_A)^{-1}K_A^T & (K_A^T\Phi\Phi^TK_A)^{-1}
+    \end{pmatrix} = \begin{pmatrix}
+    A & K_AC \\ CK_A^T & C
+    \end{pmatrix} \\
+    &\text{Schur complement:} \\
+    \Sigma / A &= C - C\underbrace{K_A^TA^{-1}K_A}\limits_{C^{-1}}C = C-C
+\end{split}
+\end{equation*}
+\end{document}
