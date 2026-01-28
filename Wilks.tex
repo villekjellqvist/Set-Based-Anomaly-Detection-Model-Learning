@@ -2,6 +2,7 @@
 \input{preamble.tex}
 \begin{document}
 \section*{Wilks Theorem for Dynamical ARX systems under equality constraints}
+\subsection*{Notation}
 We have the model of order $n$:
 \begin{equation}
     \begin {split}
@@ -19,208 +20,386 @@ We have the model of order $n$:
         \end{split}
         \label{eq:model}
 \end{equation}
-and we want to investigate the asymptotic distribution of the negative log-likelihood
+where an estimate $\hat{\theta}$ of $\theta_\star$ is computed from data using least squares with the loss function
+\begin{equation}
+    \ell(\hat{\theta}) = \frac{1}{N}(Y-\Phi^T\hat{\theta})^T(Y-\Phi^T\hat{\theta})
+\end{equation}
+where the data matrices $Y$ and $\Phi$ are structured as such:
+\begin{equation}
+    Y = \begin{bmatrix}
+        y[1] \\ y[2] \\ \vdots \\ y[N]
+    \end{bmatrix}, \;\; \Phi = \begin{bmatrix}
+        \varphi[1] & \varphi[2] & \cdots && \varphi[N]
+    \end{bmatrix}
+\end{equation}
+We want to investigate the asymptotic distribution of the likelihood
 ratio
 \begin{equation}
     R_L \triangleq -2\left(
-    \sup\limits_{\theta \in \Mp}
-    \ell(\theta \big{\vert} y_{[0:k]}, u_{[0:k]}) 
-    -\sup\limits_{\theta \in \mathbb{R}^{2n}}
-    \ell(\theta \big{\vert} y_{[0:k]}, u_{[0:k]})
+    \sup\limits_{\hat\theta \in \mathbb{R}^{2n}}
+    \ell(\hat\theta \big{\vert} Y, \Phi) 
+    -\sup\limits_{\tilde{\theta} \in \Mp}
+    \ell(\tilde\theta \big{\vert} Y, \Phi)
     \right)
 \end{equation}
 which compares the hypothesis 
 \begin{equation}
     \mathcal{H}_1: \theta_\star \in \Mp = \left\{ \theta
     \vert
-    A\theta=b\right\}.
+    A\theta=\omega\right\}, \; A \text{ semi-orthogonal and broad}
 \end{equation}
 with the null
 \begin{equation}
     \mathcal{H}_0: \theta_\star \in \mathbb{R}^{2n}.
 \end{equation}
-Furthermore, we have from the equality constraint defining $\Mp$
+We have from the equality constraint defining $\Mp$
 \begin{equation}
-    \begin{split}
-        \theta &= A^+b + \nullA\theta_C \\
-        \text{where}& \\
-        A^+ &= A^T(AA^T)^{-1} \\
-        \nullA &= \ker A \\
-        \dim \theta_C &= m = \text{rank }\nullA.
-    \end{split}
+    \centering
+        \begin{split}
+            \theta &= A^+\omega + \nullA\nu \\
+            \text{where}& \\
+            \omega \in \mathbb{R}^{n_e},& \; \nu \in \mathbb{R}^{n_c}, \; n_e+n_c=2n \\
+            A^+ &= A^T(AA^T)^{-1} \in \mathbb{R}^{2n\times n_e}\\
+            \nullA &= \ker A \in \mathbb{R}^{2n\times n_c}\\
+        \end{split}
     \label{eq:projection}
 \end{equation}
+$\omega$ thus represents prior knowledge of the model, where some linear combinations of $\theta_\star$ are
+known beforehand. $\nu$ are the remaining variables in $\nullA$-space that still need to be estimated.
+
+$\hat{\theta} = A^+\hat\omega + K_A \hat{\nu}$ refers to the unconstrained estimate of $\theta_\star$, and
+$\tilde{\theta} = A^+\omega + K_A \tilde{\nu}$ refers to the constrained
+estimate where $\omega$ is taken as prior knowledge.
+
+Since the block matrix $\left[A^+ \; K_A\right]$ spans the full row and column space of $\mathbb{R}^{2n}$
+and is orthogonal, we also have the relation
+\begin{equation}
+    \begin{bmatrix}
+        \omega \\ \nu
+    \end{bmatrix} = \begin{bmatrix}
+        A^+ & K_A
+    \end{bmatrix}^T\theta
+    \label{eq:inv_projection}
+\end{equation}
+
+\subsection*{Distribution of the MLE estimator}
+
 First, some prerequisite results from \cite{soderstrom_system_nodate}.
 Given the above model, and a Maximum Likelihood estimate
 $\hat{\theta} \in \mathbb{R}^{2n}$ we have the (asymptotic) results
 as the number of samples $N \rightarrow  \infty$, given that the data
-$\{\phi[k], y[k]\}$ is produced by the model (\ref{eq:model}):
+$\{\Phi, Y\}$ is produced by the model (\ref{eq:model}):
 \begin{equation}
     \begin{split}
         \text{Asymptotic distribution of the error:}\\
         \sqrt{N}(\theta_\star-\hat{\theta})
         \xrightarrow[N\rightarrow\infty]{\text{dist}}
-        \mathcal{N}(0, \frac{1}{\gamma^2}\mathbb{E}\varphi\varphi^T) \\
+        \mathcal{N}(0, \gamma^2(\mathbb{E}\varphi\varphi^T)^{-1}) \\
         \text{Fisher Information Matrix }\mathcal{I}(\theta):\\
         \mathcal{I}(\theta) = N \frac{1}{\gamma^2}\mathbb{E}\varphi\varphi^T
     \end{split}
    \label{eq:asymptotic}
 \end{equation}
-Using these results, we define the estimation error
+
+Let $\Sigma_\varphi = \gamma^2(\mathbb{E}\varphi\varphi^T)^{-1}$ be the covariance of the MLE estimator.
+Using (\ref{eq:inv_projection}), we get the random variable
 \begin{equation}
-    E_N \triangleq \mathcal{I}^{\frac{1}{2}}(\theta_\star)(\theta_\star-\hat{\theta})
-    \xrightarrow[N\rightarrow\infty]{\text{dist}}
-    \mathcal{N}(0, I_{2n})
-\end{equation}
-giving us
-\begin{equation}
-    (\theta_\star-\hat{\theta}) = \mathcal{I}(\theta_\star)^{-\frac{1}{2}}E_N
-    \label{eq:differr}
-\end{equation}
-Next, we need the log likelihood $\ell(\theta)$ of the MLE and its
-derivatives:
-\begin{equation}
-    \begin{split}
-        \ell(\theta) &= -\frac{1}{2\gamma^2}\sum\limits_{k=0}^N
-        \left[ y^T[k]y[k] - 2\theta^T\varphi[k]y[k] +
-        \theta^T\varphi[k]\varphi^T[k]\theta \right] -
-        \frac{N}{2}\log(2\pi\gamma) \\
-        \ell'(\theta) &= -\frac{1}{\gamma^2}\sum\limits_{k=0}^N\left[
-            \varphi[k]\varphi^T[k]\theta - \varphi[k]y[k]
-        \right] \\
-        \ell''(\theta) &= -\frac{1}{\gamma^2}
-        \sum\limits_{k=0}^N\varphi[k]\varphi^T[k]
-    \end{split}
-\end{equation}
-for the taylor expansion of $\ell(\theta_\star)$ around $\hat{\theta}$.
-Writing out and then using (\ref{eq:differr}) we have
-\begin{equation}
-    \begin{split}
-        \ell(\theta_\star) &= \ell(\hat{\theta}) +
-        \ell'(\hat{\theta})(\theta_\star-\hat{\theta}) +
-        \frac{1}{2}(\theta_\star-\hat{\theta})^T
-        \ell''(\hat{\theta})(\theta_\star-\hat{\theta})\\
-        &= \ell(\hat{\theta}) +
-        \ell'(\hat{\theta})(\theta_\star-\hat{\theta}) +
-        \underbrace{
-            \frac{1}{2}E_N^T\mathcal{I}(\theta_\star)^{-\frac{1}{2}}
-            \ell''(\hat{\theta})
-            \mathcal{I}(\theta_\star)^{-\frac{1}{2}}E_N
-        }\limits_{\kappa}
-    \end{split}
-\end{equation}
-Now, taking the asymptotic value of this taylor series, we have
-for the second order term $\kappa$:
-\begin{equation}
-    \kappa = \frac{1}{2}E_N^T
-    \underbrace{\frac{\gamma}{\sqrt{N}}
-    \left(\mathbb{E}\varphi\varphi^T\right)^{-\frac{1}{2}}}
-    \limits_{\mathcal{I}^{-\frac{1}{2}}(\theta_\star)}
-    %
-    \underbrace{\frac{-N}{\gamma^2}\mathbb{E}\varphi\varphi^T}
-    \limits_{\mathbb{E}\ell''(\theta_\star)}
-    %
-    \underbrace{
-    \left(\mathbb{E}\varphi\varphi^T\right)^{-\frac{1}{2}}
-    \frac{\gamma}{\sqrt{N}}}
-    \limits_{\mathcal{I}^{-\frac{1}{2}}(\theta_\star)}
-    E_N = E_N^TE_N
-\end{equation}
-and the first order term $\ell'(\hat{\theta})(\theta_\star-\hat{\theta})$
-vanishes by definition, since the optimal $\hat{\theta}$ occurs at $\ell'(\theta) = 0$  giving us
-\begin{equation}
-    \begin{split}
-        \ell(\theta_\star) \approx \ell(\hat{\theta}) - \frac{1}{2}E_N^TE_N
-        \\
-        \ell(\hat{\theta}) \approx \ell(\theta_\star) + \frac{1}{2}E_N^TE_N
-    \end{split}
-    \label{eq:taylor1}
+\begin{gathered}
+    \sqrt{N}
+        \begin{bmatrix}
+            \hat{\omega}-\omega_\star \\ \hat{\nu} - \nu_\star
+        \end{bmatrix} \sim \mathcal{N}(0, \Sigma_{\mathcal{M}}) \\
+        \Sigma_{\mathcal{M}} = 
+        \begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}^T\Sigma_\varphi\begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix} = \\
+    = \begin{bmatrix}
+        (A^+)^T\Sigma_\varphi A^+ & (A^+)^T\Sigma_\varphi \nullA \\
+        \nullA^T\Sigma_\varphi A^+ & K_A^T\Sigma_\varphi \nullA
+    \end{bmatrix}
+\end{gathered}
 \end{equation}
 
-Now, we look at the constrained estimate
-$\theta= A^+b + \nullA\theta_C$
-and substitute in $\ell(\theta)$. We denote the constrained
-log likelihood by $\ell_C(\theta)$. Note that terms of $\ell_C(\theta)$ that are constant, linear and quadratic in 
-$\theta$ are black, purple, and red, respectively.
+Importantly, because
+$\begin{bmatrix}
+        A^+ & K_A
+\end{bmatrix}^T$
+is an orthogonal matrix, we also have that
 \begin{equation}
-    \begin{split}
-        \ell_C(\theta) &= -\frac{1}{2\gamma^2}\sum\limits_{k=0}^N
-        \bigg{(} y^T[k]y[k] + (A^+b)^T\varphi[k]\varphi^T[k](A^+b) -
-            2y^T[k]\varphi[k](A^+b) \\
-            &-\textcolor{purple}{2\theta_C^T\nullA^T\varphi[k]y[k]+
-                2\theta_C^T\nullA^T\varphi[k]\varphi^T[k](A^+b)} \\
-            &+\textcolor{red}{\theta_C^T\nullA^T\varphi[k]\varphi^T[k]\nullA\theta_C}\bigg{)} -
-        \frac{N}{2}\log(2\pi\gamma) \\
-        %%%
-        \ell_C'(\theta) =& -\frac{1}{\gamma^2}
-        \sum\limits_{k=0}^N
-        \textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA\theta_C}
-        + \textcolor{purple}{\nullA^T\varphi[k]\varphi^T[k](A^+b)-\nullA^T\varphi[k]y[k]}\\
-        %%%
-        \ell_C''(\theta) =& -\frac{1}{\gamma^2}
-        \sum\limits_{k=0}^N\textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA}
-    \end{split}
-\end{equation}
-Now, defining the constrained estimation error and Fisher Information
-matrix analogously to above, we get
-\begin{equation}
-    \begin{split}
-        \text{Asymptotic distribution of the constrained error:}\\
-        \sqrt{N}(\theta_{\star,C}-\hat{\theta}_C) \xrightarrow[N\rightarrow\infty]{\text{dist}}
-        \mathcal{N}(0, \frac{1}{\gamma^2}\mathbb{E}\nullA^T\varphi\varphi^T\nullA) \\
-        \text{Constrained Fisher Information Matrix }\mathcal{I}(\theta):\\
-        \mathcal{I}(\theta_C) = N \frac{1}{\gamma^2}\mathbb{E}\nullA^T\varphi\varphi^T\nullA
-    \end{split}
-    \label{eq:asymptotic_constrained}
-\end{equation}
-under the hypothesis that $A\theta_\star = b; \theta_\star = A^+b + \nullA\theta_{\star,C}$.
-This allows us to construct the \emph{constrained} estimation error
-\begin{equation}
-    \begin{split}
-        E_{N,C} \triangleq \mathcal{I}^{\frac{1}{2}}(\theta_{\star,C})(\theta_{\star,C}-\hat{\theta}_C)
-    \xrightarrow[N\rightarrow\infty]{\text{dist}}
-    \mathcal{N}(0, I_{2n}) \\
-    (\theta_{\star,C}-\hat{\theta}_C) = \mathcal{I}(\theta_{\star,C})^{-\frac{1}{2}}E_{N,C}
-    \end{split}
-\end{equation}
-Proceeding exactly as in the unconstrained case, we have
-\begin{equation}
-    \begin{split}
-        \ell_C(\theta_{\star,C}) &\approx \ell_C(\hat{\theta}_C) - \frac{1}{2}E_{N,C}^T E_{N,C}
-        \\
-        \ell_C(\hat{\theta}_C) &\approx \ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C}
-    \end{split}
-    \label{eq:taylor2}
+    \begin{gathered}
+        \Sigma_{\mathcal{M}}^{-1} =
+        \begin{bmatrix}
+            A^+ & K_A
+        \end{bmatrix}^T\Sigma_\varphi^{-1}\begin{bmatrix}
+            A^+ & K_A
+        \end{bmatrix} =  \\
+        =\begin{bmatrix}
+            (A^+)^T\Sigma_\varphi^{-1} A^+ & (A^+)^T\Sigma_\varphi^{-1} K_A \\[5pt]
+            K_A^T\Sigma_\varphi^{-1} A^+ & K_A^T\Sigma_\varphi^{-1} K_A
+        \end{bmatrix}
+    \end{gathered}
+    \label{eq:affinecovariance}
 \end{equation}
 
-With both these Taylor approximations (\ref{eq:taylor1}) and (\ref{eq:taylor2})
-in hand, we can write out an asymptotic expression for 
-the likelihood ratio.
+\subsection*{Taylor expansions of the loss function}
+Now we turn our attention back to the loss function. Expanding the parentheses, we have
+$$
+\ell(\theta) = \frac{1}{N}\left(
+    Y^TY -2\theta^T\Phi Y + \theta^T\Phi\Phi^T\theta.
+    \right)
+$$
+Replacing $\theta$ with the affine projection (\ref{eq:projection}), we can equivalently write
+the loss function as a function of $\omega$ and $\nu$ instead.
+\begin{equation}
+\begin{gathered}
+        \ell(\omega, \nu) = \frac{1}{N}\left(Y^TY - 2(A^+\omega)^T\Phi Y - 2\nu^TK_A^T\Phi Y + 2(A^+\omega)^T\Phi\Phi^TK_A\nu + \right.\\
+        \left.+ (A^+\omega)^T\Phi\Phi^TA^+\omega + \nu^TK_A^T\Phi\Phi^TK_A\nu \right)
+\end{gathered}
+\label{eq:constrainedloss}
+\end{equation}
+We do a Taylor expansion of the constrained estimate $\ell(\omega, \tilde{\nu})$ around the unconstrained estimate
+$\omeganu[&]{\hat}{\hat}{^T}{^T}^T$:
 
 \begin{equation}
-    \begin{split}
-        R_L &\rightarrow -2\left(\ell(\hat{\theta}) - \ell_C(\hat{\theta}_C)\right)
-        \\
-        R_L &\rightarrow -2\left(
-            (\ell(\theta_\star) + \frac{1}{2}E_N^TE_N)
-            - (\ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C})
-        \right)
-    \end{split}
+    \begin{gathered}
+        \ell(\omega, \tilde\nu) = \ell(\hat\omega, \hat\nu) + \nabla\ell(\hat\omega, \hat\nu)\omeganudiff + \frac{1}{2}\omeganudiff^T\hess_\ell\omeganudiff \\
+        \text{where } \hess_\ell = \begin{bmatrix}
+            \hess_{\omega\omega} & \hess_{\omega\nu} \\
+            \hess_{\nu\omega} & \hess_{\nu\nu}
+        \end{bmatrix}
+    \text{ is the Hessian of } \ell(\omega, \nu)
+    \end{gathered}
 \end{equation}
-Now, this next argument is bordering on circular, but is nevertheless an important last step
-to find the (asymptotic) distribution of $R_L$. Under $\mathcal{H}_1$
-we can state that the constrained and unconstrained log likelihoods $\ell(\theta_\star)$ and
-$\ell_C{\theta_{\star,C}}$ are related by the affine
-projection (\ref{eq:projection}) s.t. $\theta_\star = A^+b + \nullA\theta_{\star,C}$.
-Expanding $y[k] = \varphi^T\theta_\star$ with this projection gives gives equality in 
-$\ell(\theta_\star) = \ell_C{\theta_{\star,C}}$. The likelihood ratio then approaches:
+Since the estimator $\omeganu[&]{\hat}{\hat}{^T}{^T}^T$ 
+by definition occurs at the point $\nabla\ell(\hat\omega, \hat\nu) = 0$, we have that that term vanishes and we can rewrite
 \begin{equation}
-    R_L \rightarrow E_N^TE_N - E_{N,C}^TE_{N,C}
+    -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \nu)\right) = \omeganudiff^T\hess_\ell\omeganudiff
+    \label{eq:taylordiff}
 \end{equation}
-Since $E_N$ and $E_{N,C}$ are both standardly normally distributed with dimensions $2n$, $m$ respectively
-with $m<2n$, we have
+Next, we do the Taylor expansion of $\nabla\ell(\omega, \tilde{\nu})$ around $\nabla\ell(\hat\omega, \hat\nu)$
 \begin{equation}
-    R_L \xrightarrow[N\rightarrow\infty]{\text{dist}} \chi^2(2n-m)
+    \begin{bmatrix}
+        \nabla_\omega \\ \nabla_{\tilde{\nu}}
+    \end{bmatrix}\ell(\omega, \tilde{\nu}) = \nabla\ell(\hat\omega, \hat\nu) +
+    \begin{bmatrix}
+            \hess_{\omega\omega} & \hess_{\omega\nu} \\
+            \hess_{\nu\omega} & \hess_{\nu\nu}
+    \end{bmatrix}\omeganudiff
 \end{equation}
+Once again, we use that by definition $\nabla\ell(\hat\omega, \hat\nu) = 0$ and $\nabla_{\tilde\nu}\ell(\omega, \tilde{\nu}) = 0$, and rewrite
+$\tilde\nu-\hat\nu$ in terms of $\omega-\hat\omega$.
+\begin{equation}
+    \begin{gathered}
+        \hess_{\nu\nu}(\tilde{\nu} - \hat{\nu}) = -\hess_{\nu\omega}(\omega-\hat\omega) \\
+        (\tilde{\nu} - \hat{\nu}) = -\hess_{\nu\nu}^{-1}\hess_{\nu\omega}(\omega-\hat\omega) \\
+        \omeganudiff = \partialhess(\omega-\hat\omega)
+    \end{gathered}
+\end{equation}
+Using this result, we can rewrite (\ref{eq:taylordiff}) as such
+\begin{equation}
+    \begin{gathered}
+        -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \nu)\right) = \\ 
+         = (\omega-\hat\omega)^T \partialhess^T
+        \begin{bmatrix}
+            \hess_{\omega\omega} & \hess_{\omega\nu} \\
+            \hess_{\nu\omega} & \hess_{\nu\nu}
+        \end{bmatrix}\partialhess(\omega-\hat\omega) = \\
+        = (\omega-\hat\omega)^T\left(\hess_{\omega\omega} - \hess_{\omega\nu}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right)(\omega-\hat\omega)
+    \end{gathered}
+    \label{eq:shur}
+\end{equation}
+
+\subsection*{The Hessian and the Covariance}
+Studying the middle factor of (\ref{eq:shur}), it is easy 
+to see that it is the Schur complement of $\hess_{\omega\omega}$
+in $\hess_\ell$. Thus we have that 
+$
+\left(\hess_{\omega\omega} - \hess_{\omega\nu}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right) = \hess_{\ell[1:n_c,1:n_c]}^{-1}
+$, the square $n_c\times n_c$ top left block of the inverse of the Hessian.
+
+Writing this Hessian out more explicitly using (\ref{eq:constrainedloss}),
+we have that
+\begin{equation}
+    \hess_\ell = \begin{bmatrix}
+            (A^+)^T\Phi\Phi^TA^+ & (A^+)^T\Phi\Phi^T\nullA \\
+            \nullA^T\Phi\Phi^TA^+ & \nullA^T\Phi\Phi^T\nullA
+        \end{bmatrix}\frac{2}{N}
+\end{equation}
+Since $\lim_{N\rightarrow\infty} \Phi\Phi^T/N = \mathbb{E}\varphi\varphi^T$,
+we compare with (\ref{eq:affinecovariance}) and see that
+{\color{red} Note: A factor 2 disappears here, and I haven't found it yet.}
+\begin{equation}
+    \hess_\ell \xrightarrow[N\rightarrow\infty]{} \Sigma_{\mathcal{M}}^{-1}\gamma^2
+\end{equation}
+Using all of this, we can rewrite (\ref{eq:shur}) as
+\begin{equation}
+    \begin{gathered}
+        -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \tilde\nu)\right)
+        \xrightarrow[N\rightarrow\infty]{}
+        \gamma^2(\omega-\hat\omega)^T (A^+)^T\Sigma_\varphi^{-1} A^+ (\omega-\hat\omega) \sim \\
+        \sim \gamma^2\mathcal{\chi}^2(n_e)
+    \end{gathered}
+\end{equation}
+
+% Using these results, we define the estimation error
+% \begin{equation}
+%     E_N \triangleq \mathcal{I}^{\frac{1}{2}}(\theta_\star)(\theta_\star-\hat{\theta})
+%     \xrightarrow[N\rightarrow\infty]{\text{dist}}
+%     \mathcal{N}(0, I_{2n})
+% \end{equation}
+% giving us
+% \begin{equation}
+%     (\theta_\star-\hat{\theta}) = \mathcal{I}(\theta_\star)^{-\frac{1}{2}}E_N
+%     \label{eq:differr}
+% \end{equation}
+% Next, we need the log likelihood $\ell(\theta)$ of the MLE and its
+% derivatives:
+% \begin{equation}
+%     \begin{split}
+%         \ell(\theta) &= -\frac{1}{2\gamma^2}\sum\limits_{k=0}^N
+%         \left[ y^T[k]y[k] - 2\theta^T\varphi[k]y[k] +
+%         \theta^T\varphi[k]\varphi^T[k]\theta \right] -
+%         \frac{N}{2}\log(2\pi\gamma) \\
+%         \ell'(\theta) &= -\frac{1}{\gamma^2}\sum\limits_{k=0}^N\left[
+%             \varphi[k]\varphi^T[k]\theta - \varphi[k]y[k]
+%         \right] \\
+%         \ell''(\theta) &= -\frac{1}{\gamma^2}
+%         \sum\limits_{k=0}^N\varphi[k]\varphi^T[k]
+%     \end{split}
+% \end{equation}
+% for the taylor expansion of $\ell(\theta_\star)$ around $\hat{\theta}$.
+% Writing out and then using (\ref{eq:differr}) we have
+% \begin{equation}
+%     \begin{split}
+%         \ell(\theta_\star) &= \ell(\hat{\theta}) +
+%         \ell'(\hat{\theta})(\theta_\star-\hat{\theta}) +
+%         \frac{1}{2}(\theta_\star-\hat{\theta})^T
+%         \ell''(\hat{\theta})(\theta_\star-\hat{\theta})\\
+%         &= \ell(\hat{\theta}) +
+%         \ell'(\hat{\theta})(\theta_\star-\hat{\theta}) +
+%         \underbrace{
+%             \frac{1}{2}E_N^T\mathcal{I}(\theta_\star)^{-\frac{1}{2}}
+%             \ell''(\hat{\theta})
+%             \mathcal{I}(\theta_\star)^{-\frac{1}{2}}E_N
+%         }\limits_{\kappa}
+%     \end{split}
+% \end{equation}
+% Now, taking the asymptotic value of this taylor series, we have
+% for the second order term $\kappa$:
+% \begin{equation}
+%     \kappa = \frac{1}{2}E_N^T
+%     \underbrace{\frac{\gamma}{\sqrt{N}}
+%     \left(\mathbb{E}\varphi\varphi^T\right)^{-\frac{1}{2}}}
+%     \limits_{\mathcal{I}^{-\frac{1}{2}}(\theta_\star)}
+%     %
+%     \underbrace{\frac{-N}{\gamma^2}\mathbb{E}\varphi\varphi^T}
+%     \limits_{\mathbb{E}\ell''(\theta_\star)}
+%     %
+%     \underbrace{
+%     \left(\mathbb{E}\varphi\varphi^T\right)^{-\frac{1}{2}}
+%     \frac{\gamma}{\sqrt{N}}}
+%     \limits_{\mathcal{I}^{-\frac{1}{2}}(\theta_\star)}
+%     E_N = E_N^TE_N
+% \end{equation}
+% and the first order term $\ell'(\hat{\theta})(\theta_\star-\hat{\theta})$
+% vanishes by definition, since the optimal $\hat{\theta}$ occurs at $\ell'(\theta) = 0$  giving us
+% \begin{equation}
+%     \begin{split}
+%         \ell(\theta_\star) \approx \ell(\hat{\theta}) - \frac{1}{2}E_N^TE_N
+%         \\
+%         \ell(\hat{\theta}) \approx \ell(\theta_\star) + \frac{1}{2}E_N^TE_N
+%     \end{split}
+%     \label{eq:taylor1}
+% \end{equation}
+
+% Now, we look at the constrained estimate
+% $\theta= A^+b + \nullA\theta_C$
+% and substitute in $\ell(\theta)$. We denote the constrained
+% log likelihood by $\ell_C(\theta)$. Note that terms of $\ell_C(\theta)$ that are constant, linear and quadratic in 
+% $\theta$ are black, purple, and red, respectively.
+% \begin{equation}
+%     \begin{split}
+%         \ell_C(\theta) &= -\frac{1}{2\gamma^2}\sum\limits_{k=0}^N
+%         \bigg{(} y^T[k]y[k] + (A^+b)^T\varphi[k]\varphi^T[k](A^+b) -
+%             2y^T[k]\varphi[k](A^+b) \\
+%             &-\textcolor{purple}{2\theta_C^T\nullA^T\varphi[k]y[k]+
+%                 2\theta_C^T\nullA^T\varphi[k]\varphi^T[k](A^+b)} \\
+%             &+\textcolor{red}{\theta_C^T\nullA^T\varphi[k]\varphi^T[k]\nullA\theta_C}\bigg{)} -
+%         \frac{N}{2}\log(2\pi\gamma) \\
+%         %%%
+%         \ell_C'(\theta) =& -\frac{1}{\gamma^2}
+%         \sum\limits_{k=0}^N
+%         \textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA\theta_C}
+%         + \textcolor{purple}{\nullA^T\varphi[k]\varphi^T[k](A^+b)-\nullA^T\varphi[k]y[k]}\\
+%         %%%
+%         \ell_C''(\theta) =& -\frac{1}{\gamma^2}
+%         \sum\limits_{k=0}^N\textcolor{red}{\nullA^T\varphi[k]\varphi^T[k]\nullA}
+%     \end{split}
+% \end{equation}
+% Now, defining the constrained estimation error and Fisher Information
+% matrix analogously to above, we get
+% \begin{equation}
+%     \begin{split}
+%         \text{Asymptotic distribution of the constrained error:}\\
+%         \sqrt{N}(\theta_{\star,C}-\hat{\theta}_C) \xrightarrow[N\rightarrow\infty]{\text{dist}}
+%         \mathcal{N}(0, \frac{1}{\gamma^2}\mathbb{E}\nullA^T\varphi\varphi^T\nullA) \\
+%         \text{Constrained Fisher Information Matrix }\mathcal{I}(\theta):\\
+%         \mathcal{I}(\theta_C) = N \frac{1}{\gamma^2}\mathbb{E}\nullA^T\varphi\varphi^T\nullA
+%     \end{split}
+%     \label{eq:asymptotic_constrained}
+% \end{equation}
+% under the hypothesis that $A\theta_\star = b; \theta_\star = A^+b + \nullA\theta_{\star,C}$.
+% This allows us to construct the \emph{constrained} estimation error
+% \begin{equation}
+%     \begin{split}
+%         E_{N,C} \triangleq \mathcal{I}^{\frac{1}{2}}(\theta_{\star,C})(\theta_{\star,C}-\hat{\theta}_C)
+%     \xrightarrow[N\rightarrow\infty]{\text{dist}}
+%     \mathcal{N}(0, I_{2n}) \\
+%     (\theta_{\star,C}-\hat{\theta}_C) = \mathcal{I}(\theta_{\star,C})^{-\frac{1}{2}}E_{N,C}
+%     \end{split}
+% \end{equation}
+% Proceeding exactly as in the unconstrained case, we have
+% \begin{equation}
+%     \begin{split}
+%         \ell_C(\theta_{\star,C}) &\approx \ell_C(\hat{\theta}_C) - \frac{1}{2}E_{N,C}^T E_{N,C}
+%         \\
+%         \ell_C(\hat{\theta}_C) &\approx \ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C}
+%     \end{split}
+%     \label{eq:taylor2}
+% \end{equation}
+
+% With both these Taylor approximations (\ref{eq:taylor1}) and (\ref{eq:taylor2})
+% in hand, we can write out an asymptotic expression for 
+% the likelihood ratio.
+
+% \begin{equation}
+%     \begin{split}
+%         R_L &\rightarrow -2\left(\ell(\hat{\theta}) - \ell_C(\hat{\theta}_C)\right)
+%         \\
+%         R_L &\rightarrow -2\left(
+%             (\ell(\theta_\star) + \frac{1}{2}E_N^TE_N)
+%             - (\ell_C(\theta_{\star,C}) + \frac{1}{2}E_{N,C}^T E_{N,C})
+%         \right)
+%     \end{split}
+% \end{equation}
+% Now, this next argument is bordering on circular, but is nevertheless an important last step
+% to find the (asymptotic) distribution of $R_L$. Under $\mathcal{H}_1$
+% we can state that the constrained and unconstrained log likelihoods $\ell(\theta_\star)$ and
+% $\ell_C{\theta_{\star,C}}$ are related by the affine
+% projection (\ref{eq:projection}) s.t. $\theta_\star = A^+b + \nullA\theta_{\star,C}$.
+% Expanding $y[k] = \varphi^T\theta_\star$ with this projection gives gives equality in 
+% $\ell(\theta_\star) = \ell_C{\theta_{\star,C}}$. The likelihood ratio then approaches:
+% \begin{equation}
+%     R_L \rightarrow E_N^TE_N - E_{N,C}^TE_{N,C}
+% \end{equation}
+% Since $E_N$ and $E_{N,C}$ are both standardly normally distributed with dimensions $2n$, $m$ respectively
+% with $m<2n$, we have
+% \begin{equation}
+%     R_L \xrightarrow[N\rightarrow\infty]{\text{dist}} \chi^2(2n-m)
+% \end{equation}
 \printbibliography
 \end{document}
