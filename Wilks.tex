@@ -22,7 +22,8 @@ We have the model of order $n$:
 \end{equation}
 where an estimate $\hat{\theta}$ of $\theta_\star$ is computed from data using least squares with the loss function
 \begin{equation}
-    \ell(\hat{\theta}) = \frac{1}{N}(Y-\Phi^T\hat{\theta})^T(Y-\Phi^T\hat{\theta})
+    \ell(\hat{\theta}) = (Y-\Phi^T\hat{\theta})^T(Y-\Phi^T\hat{\theta})
+    \label{eq:loss}
 \end{equation}
 where the data matrices $Y$ and $\Phi$ are structured as such:
 \begin{equation}
@@ -30,23 +31,23 @@ where the data matrices $Y$ and $\Phi$ are structured as such:
         y[1] \\ y[2] \\ \vdots \\ y[N]
     \end{bmatrix}, \;\; \Phi = \begin{bmatrix}
         \varphi[1] & \varphi[2] & \cdots && \varphi[N]
-    \end{bmatrix}
+    \end{bmatrix}.
 \end{equation}
-We want to investigate the asymptotic distribution of the likelihood
+We want to investigate the asymptotic distribution of the log-likelihood
 ratio
 \begin{equation}
-    R_L \triangleq -2\left(
+    R_L \triangleq \left(
+    \sup\limits_{\tilde{\theta} \in \Mp}
+    \ell(\tilde\theta \big{\vert} Y, \Phi)-
     \sup\limits_{\hat\theta \in \mathbb{R}^{2n}}
     \ell(\hat\theta \big{\vert} Y, \Phi) 
-    -\sup\limits_{\tilde{\theta} \in \Mp}
-    \ell(\tilde\theta \big{\vert} Y, \Phi)
     \right)
 \end{equation}
 which compares the hypothesis 
 \begin{equation}
     \mathcal{H}_1: \theta_\star \in \Mp = \left\{ \theta
     \vert
-    A\theta=\omega\right\}, \; A \text{ semi-orthogonal and broad}
+    A\theta=\omega\right\}, \; A^TA = I
 \end{equation}
 with the null
 \begin{equation}
@@ -60,9 +61,9 @@ We have from the equality constraint defining $\Mp$
             \text{where}& \\
             \omega \in \mathbb{R}^{n_e},& \; \nu \in \mathbb{R}^{n_c}, \; n_e+n_c=2n \\
             A^+ &= A^T(AA^T)^{-1} \in \mathbb{R}^{2n\times n_e}\\
-            \nullA &= \ker A \in \mathbb{R}^{2n\times n_c}\\
+            \nullA & \in \mathbb{R}^{2n\times n_c} \text{ whose columns form a basis for} \ker A\\
         \end{split}
-    \label{eq:projection}
+    \label{eq:affinemap}
 \end{equation}
 $\omega$ thus represents prior knowledge of the model, where some linear combinations of $\theta_\star$ are
 known beforehand. $\nu$ are the remaining variables in $\nullA$-space that still need to be estimated.
@@ -71,115 +72,183 @@ $\hat{\theta} = A^+\hat\omega + K_A \hat{\nu}$ refers to the unconstrained estim
 $\tilde{\theta} = A^+\omega + K_A \tilde{\nu}$ refers to the constrained
 estimate where $\omega$ is taken as prior knowledge.
 
-Since the block matrix $\left[A^+ \; K_A\right]$ spans the full row and column space of $\mathbb{R}^{2n}$
-and is orthogonal, we also have the relation
-\begin{equation}
+For a general $\theta$, we have the following lemma.
+\begin{lemma}
+    Given the affine map (\ref{eq:affinemap}) that maps $\theta$ to $\omega, \nu$,
+    the inverse map from $\omega, \nu$ to $\theta$ is given by:
+    \begin{equation*}
+        \begin{bmatrix}
+            \omega \\ \nu
+        \end{bmatrix} = \begin{bmatrix}
+            A^+ & K_A
+        \end{bmatrix}^T\theta.
+    \end{equation*}
+\label{lem:inv_map}
+\end{lemma}
+\begin{proof}
+    Rewrite (\ref{eq:affinemap}) as 
+    \[
+    \theta = \begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}
     \begin{bmatrix}
         \omega \\ \nu
-    \end{bmatrix} = \begin{bmatrix}
-        A^+ & K_A
-    \end{bmatrix}^T\theta
-    \label{eq:inv_projection}
-\end{equation}
+    \end{bmatrix}.
+    \]
+    Both $A^+$ and $\nullA$ are semiorthogonal, with their columns being basis vectors for $\text{im } A$ and
+    $\ker A$ respectively. Therefore, the matrix $\begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}$ is orthogonal and has a range space of $\text{im } A \oplus \ker A = \mathbb{R}^{2n}$, with
+    it's inverse being it's own transpose. To get lemma \ref{lem:inv_map}, left-multiply the above equation with this transpose.
+\end{proof}
+
 
 \subsection*{Distribution of the MLE estimator}
 
 First, some prerequisite results from \cite{soderstrom_system_nodate}.
 Given the above model, and a Maximum Likelihood estimate
-$\hat{\theta} \in \mathbb{R}^{2n}$ we have the (asymptotic) results
+$\hat{\theta} \in \mathbb{R}^{2n}$ we have the asymptotic distribution of the error
 as the number of samples $N \rightarrow  \infty$, given that the data
 $\{\Phi, Y\}$ is produced by the model (\ref{eq:model}):
 \begin{equation}
-    \begin{split}
-        \text{Asymptotic distribution of the error:}\\
-        \sqrt{N}(\theta_\star-\hat{\theta})
+        \sqrt{N}(\hat{\theta}-\theta_\star)
         \xrightarrow[N\rightarrow\infty]{\text{dist}}
-        \mathcal{N}(0, \gamma^2(\mathbb{E}\varphi\varphi^T)^{-1}) \\
-        \text{Fisher Information Matrix }\mathcal{I}(\theta):\\
-        \mathcal{I}(\theta) = N \frac{1}{\gamma^2}\mathbb{E}\varphi\varphi^T
-    \end{split}
-   \label{eq:asymptotic}
+        \mathcal{N}(0, \gamma^2(\mathbb{E}\varphi\varphi^T)^{-1})
 \end{equation}
 
 Let $\Sigma_\varphi = \gamma^2(\mathbb{E}\varphi\varphi^T)^{-1}$ be the covariance of the MLE estimator.
-Using (\ref{eq:inv_projection}), we get the random variable
-\begin{equation}
-\begin{gathered}
-    \sqrt{N}
-        \begin{bmatrix}
-            \hat{\omega}-\omega_\star \\ \hat{\nu} - \nu_\star
-        \end{bmatrix} \sim \mathcal{N}(0, \Sigma_{\mathcal{M}}) \\
+The distribution of the estimation error can be expressed in terms of $\omega, \nu$ in
+accordance with the following lemma:
+\begin{lemma}
+    The estimation error in terms of $\omega$ and $\nu$ is obtained by the linear transformation
+    \[
+    \begin{bmatrix}
+            A^+ & K_A
+    \end{bmatrix}^T
+    \sqrt{N}(\hat{\theta}-\theta_\star) =
+    \sqrt{N}\begin{bmatrix}
+        \hat{\omega}-\omega_\star \\ \hat{\nu} - \nu_\star
+    \end{bmatrix}
+    \sim \mathcal{N}(0, \Sigma_{\mathcal{M}})
+    \]
+    and has the covariance matrix
+    \begin{equation}
+        \begin{gathered}
         \Sigma_{\mathcal{M}} = 
         \begin{bmatrix}
-        A^+ & \nullA
-    \end{bmatrix}^T\Sigma_\varphi\begin{bmatrix}
-        A^+ & \nullA
-    \end{bmatrix} = \\
-    = \begin{bmatrix}
+        \Sigma_{\omega\omega} & \Sigma_{\omega\nu} \\
+        \Sigma_{\nu\omega} & \Sigma_{\nu\nu}
+        \end{bmatrix} \\
+        = \begin{bmatrix}
         (A^+)^T\Sigma_\varphi A^+ & (A^+)^T\Sigma_\varphi \nullA \\
         \nullA^T\Sigma_\varphi A^+ & K_A^T\Sigma_\varphi \nullA
-    \end{bmatrix}
-\end{gathered}
-\end{equation}
-
-Importantly, because
-$\begin{bmatrix}
-        A^+ & K_A
-\end{bmatrix}^T$
-is an orthogonal matrix, we also have that
-\begin{equation}
-    \begin{gathered}
-        \Sigma_{\mathcal{M}}^{-1} =
-        \begin{bmatrix}
-            A^+ & K_A
-        \end{bmatrix}^T\Sigma_\varphi^{-1}\begin{bmatrix}
-            A^+ & K_A
-        \end{bmatrix} =  \\
-        =\begin{bmatrix}
-            (A^+)^T\Sigma_\varphi^{-1} A^+ & (A^+)^T\Sigma_\varphi^{-1} K_A \\[5pt]
-            K_A^T\Sigma_\varphi^{-1} A^+ & K_A^T\Sigma_\varphi^{-1} K_A
         \end{bmatrix}
-    \end{gathered}
-    \label{eq:affinecovariance}
-\end{equation}
+        \end{gathered}
+    \end{equation}
+
+    Furthermore, the inverse of its covariance matrix is given by
+    \begin{equation}
+        \begin{gathered}
+            \Sigma_{\mathcal{M}}^{-1}
+            =\begin{bmatrix}
+                (A^+)^T\Sigma_\varphi^{-1} A^+ & (A^+)^T\Sigma_\varphi^{-1} K_A \\[5pt]
+                K_A^T\Sigma_\varphi^{-1} A^+ & K_A^T\Sigma_\varphi^{-1} K_A
+            \end{bmatrix}
+        \end{gathered}
+        \label{eq:affinecovariance}
+    \end{equation}
+    \label{lem:omeganudistribution}
+\end{lemma}
+
+\begin{proof}
+    The distribution of $\sqrt{N}\begin{bmatrix}
+        \hat{\omega}-\omega_\star \\ \hat{\nu} - \nu_\star
+    \end{bmatrix}$ follows immediately from lemma \ref{lem:inv_map}, where the covariance
+    matrix $\Sigma_{\mathcal{M}}$ is given by
+    $\begin{bmatrix}
+        A^+ & \nullA
+        \end{bmatrix}^T\Sigma_\varphi\begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}$.
+    Since 
+    $\begin{bmatrix}
+        A^+ & K_A
+    \end{bmatrix}^T$
+    is an orthogonal matrix, the inverse covariance matrix can be computed as such
+    \[
+    \Sigma_{\mathcal{M}}^{-1} =
+    \left(\begin{bmatrix}
+        A^+ & \nullA
+        \end{bmatrix}^T\Sigma_\varphi\begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}\right)^{-1} =
+    \begin{bmatrix}
+        A^+ & \nullA
+        \end{bmatrix}^T\Sigma_\varphi^{-1}\begin{bmatrix}
+        A^+ & \nullA
+    \end{bmatrix}
+    \]
+\end{proof}
+
 
 \subsection*{Taylor expansions of the loss function}
-Now we turn our attention back to the loss function. Expanding the parentheses, we have
+Turning back to the loss function (\ref{eq:loss}), by expanding
+we have
 $$
-\ell(\theta) = \frac{1}{N}\left(
+\ell(\theta) = \left(
     Y^TY -2\theta^T\Phi Y + \theta^T\Phi\Phi^T\theta.
     \right)
 $$
-Replacing $\theta$ with the affine projection (\ref{eq:projection}), we can equivalently write
+Replacing $\theta$ with the affine map (\ref{eq:affinemap}), we can equivalently write
 the loss function as a function of $\omega$ and $\nu$ instead.
 \begin{equation}
 \begin{gathered}
-        \ell(\omega, \nu) = \frac{1}{N}\left(Y^TY - 2(A^+\omega)^T\Phi Y - 2\nu^TK_A^T\Phi Y + 2(A^+\omega)^T\Phi\Phi^TK_A\nu + \right.\\
+        \ell(\omega, \nu) = \left(Y^TY - 2(A^+\omega)^T\Phi Y - 2\nu^TK_A^T\Phi Y + 2(A^+\omega)^T\Phi\Phi^TK_A\nu + \right.\\
         \left.+ (A^+\omega)^T\Phi\Phi^TA^+\omega + \nu^TK_A^T\Phi\Phi^TK_A\nu \right)
 \end{gathered}
 \label{eq:constrainedloss}
 \end{equation}
+
+Then, we can equivalently write $R_L$ according to the following lemma.
+\begin{lemma}
+    Let 
+    \begin{equation}
+        \hess_\ell = \begin{bmatrix}
+                \hess_{\omega\omega} & \hess_{\omega\nu} \\
+                \hess_{\nu\omega} & \hess_{\nu\nu}
+            \end{bmatrix}
+            \label{eq:hessian}
+    \end{equation}
+    be the Hessian of the loss function $\ell(\omega, \nu)$.
+    $R_L =  \left(\ell(\omega, \tilde\nu)-\ell(\hat\omega, \hat\nu)\right)$
+    can equivalently be expressed in terms of just
+    $\omega-\hat{\omega}$ and the Schur complement of $\hess_{\omega\omega}$ in its Hessian as so:
+    \begin{equation}
+    \begin{gathered}
+        \ell(\omega, \tilde\nu)-\ell(\hat\omega, \hat\nu) = \\ 
+        = (\omega-\hat\omega)^T\left(\hess_{\omega\omega} - \hess_{\omega\nu}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right)(\omega-\hat\omega)
+    \end{gathered}
+    \label{eq:shur}
+\end{equation}
+\end{lemma}
+\begin{proof}
 We do a Taylor expansion of the constrained estimate $\ell(\omega, \tilde{\nu})$ around the unconstrained estimate
 $\omeganu[&]{\hat}{\hat}{^T}{^T}^T$:
 
-\begin{equation}
+\begin{equation*}
     \begin{gathered}
-        \ell(\omega, \tilde\nu) = \ell(\hat\omega, \hat\nu) + \nabla\ell(\hat\omega, \hat\nu)\omeganudiff + \frac{1}{2}\omeganudiff^T\hess_\ell\omeganudiff \\
-        \text{where } \hess_\ell = \begin{bmatrix}
-            \hess_{\omega\omega} & \hess_{\omega\nu} \\
-            \hess_{\nu\omega} & \hess_{\nu\nu}
-        \end{bmatrix}
-    \text{ is the Hessian of } \ell(\omega, \nu)
+        \ell(\omega, \tilde\nu) = \ell(\hat\omega, \hat\nu) + \nabla\ell(\hat\omega, \hat\nu)\omeganudiff + \frac{1}{2}\omeganudiff^T\hess_\ell\omeganudiff
     \end{gathered}
-\end{equation}
+\end{equation*}
 Since the estimator $\omeganu[&]{\hat}{\hat}{^T}{^T}^T$ 
 by definition occurs at the point $\nabla\ell(\hat\omega, \hat\nu) = 0$, we have that that term vanishes and we can rewrite
 \begin{equation}
-    -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \nu)\right) = \omeganudiff^T\hess_\ell\omeganudiff
+    \left(\ell(\omega, \tilde\nu)- \ell(\hat\omega, \hat\nu)\right) = \omeganudiff^T\hess_\ell\omeganudiff
     \label{eq:taylordiff}
 \end{equation}
 Next, we do the Taylor expansion of $\nabla\ell(\omega, \tilde{\nu})$ around $\nabla\ell(\hat\omega, \hat\nu)$
-\begin{equation}
+\begin{equation*}
     \begin{bmatrix}
         \nabla_\omega \\ \nabla_{\tilde{\nu}}
     \end{bmatrix}\ell(\omega, \tilde{\nu}) = \nabla\ell(\hat\omega, \hat\nu) +
@@ -187,21 +256,21 @@ Next, we do the Taylor expansion of $\nabla\ell(\omega, \tilde{\nu})$ around $\n
             \hess_{\omega\omega} & \hess_{\omega\nu} \\
             \hess_{\nu\omega} & \hess_{\nu\nu}
     \end{bmatrix}\omeganudiff
-\end{equation}
+\end{equation*}
 Once again, we use that by definition $\nabla\ell(\hat\omega, \hat\nu) = 0$ and $\nabla_{\tilde\nu}\ell(\omega, \tilde{\nu}) = 0$, and rewrite
 $\tilde\nu-\hat\nu$ in terms of $\omega-\hat\omega$.
-\begin{equation}
+\begin{equation*}
     \begin{gathered}
         \hess_{\nu\nu}(\tilde{\nu} - \hat{\nu}) = -\hess_{\nu\omega}(\omega-\hat\omega) \\
         (\tilde{\nu} - \hat{\nu}) = -\hess_{\nu\nu}^{-1}\hess_{\nu\omega}(\omega-\hat\omega) \\
         \omeganudiff = \partialhess(\omega-\hat\omega)
     \end{gathered}
-\end{equation}
+\end{equation*}
 Using this result, we can rewrite (\ref{eq:taylordiff}) as such
-\begin{equation}
+\begin{equation*}
     \begin{gathered}
-        -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \nu)\right) = \\ 
-         = (\omega-\hat\omega)^T \partialhess^T
+        \ell(\omega, \tilde\nu)-\ell(\hat\omega, \hat\nu) = \\ 
+         = \frac{1}{2}(\omega-\hat\omega)^T \partialhess^T
         \begin{bmatrix}
             \hess_{\omega\omega} & \hess_{\omega\nu} \\
             \hess_{\nu\omega} & \hess_{\nu\nu}
@@ -209,40 +278,52 @@ Using this result, we can rewrite (\ref{eq:taylordiff}) as such
         = (\omega-\hat\omega)^T\left(\hess_{\omega\omega} - \hess_{\omega\nu}
         \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right)(\omega-\hat\omega)
     \end{gathered}
-    \label{eq:shur}
-\end{equation}
+\end{equation*}
+\end{proof}
 
 \subsection*{The Hessian and the Covariance}
-Studying the middle factor of (\ref{eq:shur}), it is easy 
-to see that it is the Schur complement of $\hess_{\omega\omega}$
-in $\hess_\ell$. Thus we have that 
+Since the middle factor of (\ref{eq:shur}) is the Schur complement of
+$\hess_{\omega\omega}$
+in $\hess_\ell$, we have by the block matrix inversion formula that
 $
 \left(\hess_{\omega\omega} - \hess_{\omega\nu}
-        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right) = \hess_{\ell[1:n_c,1:n_c]}^{-1}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right)^{-1} = \hess_{\ell[1:n_c,1:n_c]}^{-1}
 $, the square $n_c\times n_c$ top left block of the inverse of the Hessian.
 
-Writing this Hessian out more explicitly using (\ref{eq:constrainedloss}),
-we have that
+By differentiating (\ref{eq:constrainedloss}) twice, we get an explicit
+formulation of the Hessian (\ref{eq:hessian})
 \begin{equation}
-    \hess_\ell = \begin{bmatrix}
+    \hess_\ell = 2\begin{bmatrix}
             (A^+)^T\Phi\Phi^TA^+ & (A^+)^T\Phi\Phi^T\nullA \\
             \nullA^T\Phi\Phi^TA^+ & \nullA^T\Phi\Phi^T\nullA
-        \end{bmatrix}\frac{2}{N}
+        \end{bmatrix}
 \end{equation}
 Since $\lim_{N\rightarrow\infty} \Phi\Phi^T/N = \mathbb{E}\varphi\varphi^T$,
 we compare with (\ref{eq:affinecovariance}) and see that
-{\color{red} Note: A factor 2 disappears here, and I haven't found it yet.}
 \begin{equation}
-    \hess_\ell \xrightarrow[N\rightarrow\infty]{} \Sigma_{\mathcal{M}}^{-1}\gamma^2
+    \hess_\ell\frac{1}{N} \xrightarrow[N\rightarrow\infty]{} \Sigma_{\mathcal{M}}^{-1}\gamma^2
 \end{equation}
+and therefore the Schur complement
+\begin{equation}
+    \frac{1}{N}\left(\hess_{\omega\omega} - \hess_{\omega\nu}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right) = \Sigma_{\omega\omega}^{-1}\gamma^2
+\end{equation}
+is proportional by a a factor $1/(\gamma^2N)$ to the inverse of the covariance of the marginal distribution of
+$\sqrt{N}(\omega-\hat\omega)$.
 Using all of this, we can rewrite (\ref{eq:shur}) as
 \begin{equation}
     \begin{gathered}
-        -2\left(\ell(\hat\omega, \hat\nu) - \ell(\omega, \tilde\nu)\right)
+        \frac{\ell(\omega, \tilde\nu) - \ell(\hat\omega, \hat\nu)}{\gamma^2}
         \xrightarrow[N\rightarrow\infty]{}
-        \gamma^2(\omega-\hat\omega)^T (A^+)^T\Sigma_\varphi^{-1} A^+ (\omega-\hat\omega) \sim \\
-        \sim \gamma^2\mathcal{\chi}^2(n_e)
+        (\omega-\hat\omega)^T\left(\hess_{\omega\omega} - \hess_{\omega\nu}
+        \hess_{\nu\nu}^{-1}\hess_{\nu\omega}\right)(\omega-\hat\omega)\frac{N}{N} = \\
+        =\sqrt{N}(\omega-\hat\omega)^T \Sigma_{\omega\omega}^{-1} (\omega-\hat\omega)\sqrt{N}
+        \sim \mathcal{\chi}^2(n_e)
     \end{gathered}
+\end{equation}
+Or more concisely that
+\begin{equation}
+    \frac{R_L}{\gamma^2} \sim \mathcal{\chi}^2(n_e)
 \end{equation}
 
 % Using these results, we define the estimation error
@@ -390,7 +471,7 @@ Using all of this, we can rewrite (\ref{eq:shur}) as
 % to find the (asymptotic) distribution of $R_L$. Under $\mathcal{H}_1$
 % we can state that the constrained and unconstrained log likelihoods $\ell(\theta_\star)$ and
 % $\ell_C{\theta_{\star,C}}$ are related by the affine
-% projection (\ref{eq:projection}) s.t. $\theta_\star = A^+b + \nullA\theta_{\star,C}$.
+% projection (\ref{eq:affinemap}) s.t. $\theta_\star = A^+b + \nullA\theta_{\star,C}$.
 % Expanding $y[k] = \varphi^T\theta_\star$ with this projection gives gives equality in 
 % $\ell(\theta_\star) = \ell_C{\theta_{\star,C}}$. The likelihood ratio then approaches:
 % \begin{equation}
